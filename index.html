@@ -494,6 +494,109 @@ h2 em {
 .fem-footer-text strong { color: var(--text); }
 .fem-reply-note { margin-top: 10px; font-size: 11px; color: var(--orange); font-style: italic; }
 
+/* ─── GET YOUR FIRST PITCH ─── */
+.first-pitch-section { background: var(--black); color: white; }
+.first-pitch-section .section-kicker { color: rgba(249,69,1,0.9); }
+.first-pitch-section h2 { color: white; }
+.first-pitch-section h2 em { color: var(--pink); }
+.first-pitch-intro {
+  font-size: 17px;
+  color: rgba(255,255,255,0.55);
+  max-width: 580px;
+  margin-bottom: 48px;
+  font-weight: 300;
+  line-height: 1.65;
+}
+.fp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.fp-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.fp-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--grad);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.fp-card:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.15);
+  transform: translateY(-3px);
+}
+.fp-card:hover::before { opacity: 1; }
+.fp-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.2);
+  margin-bottom: 12px;
+}
+.fp-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(249,69,1,0.15);
+  color: var(--orange);
+  border: 1px solid rgba(249,69,1,0.25);
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 12px;
+}
+.fp-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: white;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.fp-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.65;
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+.fp-link {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.fp-card-cta {
+  background: rgba(249,69,1,0.07);
+  border-color: rgba(249,69,1,0.2);
+  cursor: default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fp-card-cta:hover {
+  transform: none;
+  background: rgba(249,69,1,0.1);
+}
+.fp-cta-inner { text-align: center; }
+.fp-cta-icon { font-size: 32px; margin-bottom: 16px; }
+.fp-cta-title { font-size: 15px; color: rgba(255,255,255,0.8); line-height: 1.5; font-weight: 500; }
+
 /* ─── PRICING ─── */
 .pricing-section { background: var(--off-white); }
 .pricing-section .section-inner { text-align: center; }
@@ -875,19 +978,54 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
 .r-rec-text { font-size: 14px; color: var(--text); line-height: 1.65; font-style: italic; font-family: 'DM Serif Display', serif; }
 .r-rec-text strong { font-style: normal; font-family: 'DM Sans', sans-serif; }
 
-.r-confirm {
+.r-paywall {
   background: var(--black);
   color: white;
-  border-radius: 14px;
-  padding: 28px 28px;
-  margin-top: 24px;
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
+  border-radius: 20px;
+  padding: 40px 36px;
+  margin-top: 32px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.08);
 }
-.r-confirm-icon { font-size: 24px; margin-top: 2px; }
-.r-confirm-text { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; font-weight: 300; }
-.r-confirm-text strong { color: white; display: block; font-size: 16px; margin-bottom: 6px; }
+.r-paywall-inner { max-width: 420px; margin: 0 auto; }
+.r-paywall-icon { font-size: 36px; margin-bottom: 16px; }
+.r-paywall-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 24px;
+  color: white;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+.r-paywall-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.6;
+  font-weight: 300;
+  margin-bottom: 28px;
+}
+.r-pay-btn {
+  width: 100%;
+  justify-content: center;
+  font-size: 16px;
+  padding: 18px 32px;
+  margin-bottom: 12px;
+}
+.r-pay-annual {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  margin-bottom: 20px;
+  transition: color 0.2s;
+}
+.r-pay-annual:hover { color: white; }
+.r-pay-trust {
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  line-height: 1.6;
+}
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -971,6 +1109,9 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
   /* Founder */
   .founder-grid { grid-template-columns: 1fr; }
   .founder-photo { aspect-ratio: 4/3; }
+
+  /* First pitch */
+  .fp-grid { grid-template-columns: 1fr; }
 
   /* Pricing */
   .pricing-card { padding: 40px 20px 32px; }
@@ -1178,6 +1319,67 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
 </div>
 </section>
 
+<!-- GET YOUR FIRST PITCH -->
+<section class="first-pitch-section">
+<div class="section-inner">
+  <div class="section-kicker">Start Here</div>
+  <h2>5 real places to get<br>your <em>first pitch in.</em></h2>
+  <p class="first-pitch-intro">Not the obvious ones. Not the ones everyone already knows. These are the platforms and programs that emerging speakers, creators, and founders are quietly using to break through — and most people have never heard of them.</p>
+  <div class="fp-grid">
+
+    <a class="fp-card" href="https://sessionize.com/app/speaker" target="_blank" rel="noopener">
+      <div class="fp-num">01</div>
+      <div class="fp-badge">Speaking</div>
+      <div class="fp-title">Sessionize</div>
+      <div class="fp-desc">The world's largest speaker submission platform. 1,000+ conferences post open CFPs here — from tech to business to education. Create a free profile and browse what's seeking speakers right now.</div>
+      <div class="fp-link">Browse open CFPs →</div>
+    </a>
+
+    <a class="fp-card" href="https://themoth.org/pitchguide" target="_blank" rel="noopener">
+      <div class="fp-num">02</div>
+      <div class="fp-badge">Speaking</div>
+      <div class="fp-title">The Moth StorySLAM</div>
+      <div class="fp-desc">The Moth actively welcomes pitches from new voices for their StorySLAM events across the US. No experience required — just a real story. Events draw 200–500 people and are recorded for the podcast.</div>
+      <div class="fp-link">Submit a story pitch →</div>
+    </a>
+
+    <a class="fp-card" href="https://podmatch.com" target="_blank" rel="noopener">
+      <div class="fp-num">03</div>
+      <div class="fp-badge">Podcast</div>
+      <div class="fp-title">PodMatch</div>
+      <div class="fp-desc">PodMatch connects podcast hosts actively seeking guests with people who have something worth saying. Create a profile once and get matched automatically to shows that want someone like you.</div>
+      <div class="fp-link">Get matched to podcasts →</div>
+    </a>
+
+    <a class="fp-card" href="https://creativemornings.com/speak" target="_blank" rel="noopener">
+      <div class="fp-num">04</div>
+      <div class="fp-badge">Speaking</div>
+      <div class="fp-title">CreativeMornings</div>
+      <div class="fp-desc">Monthly breakfast events in 200+ cities worldwide, built around community speakers. No big following required — they recruit local voices. Talks are filmed and published globally.</div>
+      <div class="fp-link">Apply to speak →</div>
+    </a>
+
+    <a class="fp-card" href="https://papercall.io/cfps" target="_blank" rel="noopener">
+      <div class="fp-num">05</div>
+      <div class="fp-badge">Speaking</div>
+      <div class="fp-title">PaperCall.io</div>
+      <div class="fp-desc">Open calls for conference presentations, panels, and workshops — aggregated in one place. Hundreds of events in tech, design, and business. Most people have never heard of it. Less competition for you.</div>
+      <div class="fp-link">Browse open calls →</div>
+    </a>
+
+    <div class="fp-card fp-card-cta">
+      <div class="fp-cta-inner">
+        <div class="fp-cta-icon">🎯</div>
+        <div class="fp-cta-title">Want 5 more like these, matched to your specific goals — every Monday?</div>
+        <button class="btn-primary" style="width:100%;justify-content:center;margin-top:20px;" onclick="showSurvey()">Get My Lineup →</button>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;">4 weeks free · Then $9/mo · Cancel anytime</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
 <!-- EMAIL PREVIEW -->
 <section class="preview-section">
 <div class="section-inner">
@@ -1218,7 +1420,7 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
         </div>
         <div class="fem-opp-desc">Deadline April 30. Seeking speakers on innovation, human behavior, and technology. 400-person audience, filmed and published.</div>
         <div class="fem-opp-why">↳ Your work in behavioral marketing is exactly the angle they're looking for. This is the one.</div>
-        <a class="fem-opp-cta">Apply Now →</a>
+        <a class="fem-opp-cta" href="https://ted.com/tedx" target="_blank" rel="noopener">Apply Now →</a>
       </div>
 
       <div class="fem-opp">
@@ -1228,7 +1430,7 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
         </div>
         <div class="fem-opp-desc">Morning Brew's marketing vertical is accepting expert opinion pieces from practitioners. 300k+ readers, paid placement.</div>
         <div class="fem-opp-why">↳ A byline here builds instant credibility in your target audience's daily feed.</div>
-        <a class="fem-opp-cta">Pitch Now →</a>
+        <a class="fem-opp-cta" href="https://www.morningbrew.com/marketing" target="_blank" rel="noopener">Pitch Now →</a>
       </div>
 
       <div class="fem-opp">
@@ -1238,7 +1440,7 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
         </div>
         <div class="fem-opp-desc">Top-50 marketing podcast. 80k listeners per episode. Daniel Murray accepts guest pitches via his newsletter form.</div>
         <div class="fem-opp-why">↳ Their audience is exactly your audience. A 30-minute conversation = months of content and followers.</div>
-        <a class="fem-opp-cta">Send Pitch →</a>
+        <a class="fem-opp-cta" href="https://themarketingmillennials.com" target="_blank" rel="noopener">Send Pitch →</a>
       </div>
 
       <div class="fem-rec">
@@ -1421,12 +1623,21 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
         <div class="r-rec-label">Ben's take this week</div>
         <div class="r-rec-text" id="r-rec-text"></div>
       </div>
-      <div class="r-confirm fade-up" style="animation-delay:0.65s;opacity:0;">
-        <div class="r-confirm-icon">📬</div>
-        <div class="r-confirm-text">
-          <strong>You're in. Lineups start Monday.</strong>
-          Your first full Lineup hits your inbox this Monday at 8am. 4 weeks free — after that it's $9/month. You'll never miss an opportunity again.
-          <div style="margin-top:10px;font-size:13px;color:rgba(255,255,255,0.4);">Brought to you by Ben Hawes HQ · Have feedback? Just reply to the email.</div>
+      <div class="r-paywall fade-up" style="animation-delay:0.65s;opacity:0;">
+        <div class="r-paywall-inner">
+          <div class="r-paywall-icon">📬</div>
+          <h3 class="r-paywall-title">Your Lineup drops every Monday at 8am.</h3>
+          <p class="r-paywall-sub">Activate your subscription to receive this + 5 fresh, personalized opportunities every single week — before the deadlines close.</p>
+          <a href="YOUR_STRIPE_MONTHLY_LINK" class="btn-primary r-pay-btn" target="_blank" rel="noopener">
+            Activate — $9/month
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="YOUR_STRIPE_ANNUAL_LINK" class="r-pay-annual" target="_blank" rel="noopener">
+            Save $29 — Go Annual ($79/yr) →
+          </a>
+          <div class="r-pay-trust">
+            ✓ 30-day money-back guarantee &nbsp;·&nbsp; ✓ Cancel anytime &nbsp;·&nbsp; ✓ Reply to any email for support
+          </div>
         </div>
       </div>
     </div>
@@ -1620,7 +1831,8 @@ Generate a personalized Lineup for this person. Return ONLY valid JSON — no ba
       "type": "Speaking | Writing | Podcast | Grant | Event | Job | Fellowship",
       "description": "2 sentences. Specific details: outlet/organization name, deadline if relevant, audience size if impressive.",
       "fit": "1 sentence starting with ↳ explaining exactly why THIS person should go after THIS opportunity, referencing their specific goal.",
-      "cta": "Apply | Pitch | Submit | Attend | Connect"
+      "cta": "Apply | Pitch | Submit | Attend | Connect",
+      "url": "https://... real URL to the application form or homepage for this opportunity"
     }
   ],
   "recommendation": "2 warm, direct sentences. Which 1-2 to start with this week and a very specific reason why. Sound like a trusted friend giving advice."
@@ -1660,15 +1872,50 @@ Generate 5 real, specific opportunities. Reference real organizations, real publ
 function fallback(u) {
   const n = u.name || 'there';
   return {
-    intro: `Hey ${n} — I went looking this week with your goals in mind, and I found 5 things that genuinely match where you're trying to go. These aren't random — each one is a real move.`,
+    intro: `Hey ${n} — I went looking this week with your goals in mind, and I found 5 things that genuinely match where you're trying to go. These aren't random — each one is a real move that most people in your position have never heard of.`,
     opportunities: [
-      { title:"TEDxManhattan — Speaker Applications Open", type:"Speaking", description:"TEDx's NYC flagship event is accepting speaker proposals for their fall showcase. 600+ attendees, filmed and distributed on YouTube.", fit:"↳ A TEDx credit is one of the fastest ways to establish authority and attract the exact audience you're trying to reach.", cta:"Apply" },
-      { title:"Morning Brew — Guest Contributor Open Call", type:"Writing", description:"Morning Brew is actively seeking expert opinion pieces from practitioners. 4M daily readers. Pieces run 600–900 words.", fit:"↳ A byline here puts your thinking in front of your target audience every single morning.", cta:"Pitch" },
-      { title:"How I Built This (NPR) — Guest Pitch", type:"Podcast", description:"Guy Raz's show accepts guest pitches via their website. 1M+ weekly listeners. Looking for compelling builder stories.", fit:"↳ Your story is exactly what their audience tunes in for — getting on this show changes everything.", cta:"Pitch" },
-      { title:"PEN America Emerging Voices Fellowship", type:"Fellowship", description:"Annual fellowship for writers from underrepresented communities. Includes mentorship, community, stipend. Applications open Q1.", fit:"↳ The network from this program is worth more than any individual opportunity — past fellows consistently credit it with their first major break.", cta:"Apply" },
-      { title:"CreativeMornings NYC — Speaker Application", type:"Speaking", description:"Monthly breakfast events for the NYC creative community. Free to attend, speakers selected from the community. 200+ attendees.", fit:"↳ This is exactly the room where your goals and your audience overlap — editors, founders, creators, collaborators.", cta:"Apply" }
+      {
+        title: "Sessionize — Browse 1,000+ Open Conference CFPs",
+        type: "Speaking",
+        description: "Sessionize is the world's largest speaker submission platform. Hundreds of conferences post their open Calls for Proposals here — from tech and business to education and design. Free to create a speaker profile.",
+        fit: "↳ If you want to get on a real stage, this is the single best starting point most emerging speakers have never found.",
+        cta: "Browse Open CFPs",
+        href: "https://sessionize.com/app/speaker"
+      },
+      {
+        title: "The Moth — Submit a StorySLAM Pitch",
+        type: "Speaking",
+        description: "The Moth runs StorySLAM events in cities across the US and actively welcomes pitches from new voices — no experience required. Events draw 200–500 people per show and are recorded for the podcast.",
+        fit: "↳ This is one of the most accessible on-ramps to live storytelling and public speaking — and the community it opens up is remarkable.",
+        cta: "Pitch Your Story",
+        href: "https://themoth.org/pitchguide"
+      },
+      {
+        title: "PodMatch — Get Matched to Podcasts Seeking Guests",
+        type: "Podcast",
+        description: "PodMatch connects podcast hosts actively looking for guests with people who have a story or expertise to share. Create a profile once and get matched automatically to relevant shows.",
+        fit: "↳ Most podcast guest spots happen through warm intros. PodMatch lets you skip that entirely and get in front of shows that actually want someone like you.",
+        cta: "Create Your Profile",
+        href: "https://podmatch.com"
+      },
+      {
+        title: "CreativeMornings — Apply to Speak at a Local Chapter",
+        type: "Speaking",
+        description: "CreativeMornings hosts monthly breakfast events in 200+ cities worldwide. They actively recruit local speakers from their community — no big following required. Talks are filmed and published globally.",
+        fit: "↳ This is the room where editors, founders, and collaborators already gather. A 20-minute talk here leads to relationships that don't happen online.",
+        cta: "Apply to Speak",
+        href: "https://creativemornings.com/speak"
+      },
+      {
+        title: "PaperCall.io — Open Calls for Presentations",
+        type: "Speaking",
+        description: "PaperCall aggregates open calls for conference presentations, workshops, and panels across tech, design, business, and more. Hundreds of active events at any given time — many beginner-friendly.",
+        fit: "↳ One of the most underused resources for emerging speakers. Most people have never heard of it — which means less competition for you.",
+        cta: "Browse Open Calls",
+        href: "https://papercall.io/cfps"
+      }
     ],
-    recommendation: `Start with the TEDx application this week — the deadline is closer than you think and a strong application takes about an hour. Then pitch Morning Brew while your ideas are fresh. Those two moves alone could change your trajectory.`
+    recommendation: `Start with Sessionize this week — create your free speaker profile and browse what's open right now. It takes 20 minutes and you'll immediately see stages you didn't know were looking for someone like you. Then check PodMatch. Those two moves alone can unlock more in a month than a year of hoping someone discovers you.`
   };
 }
 
@@ -1688,6 +1935,7 @@ function renderResult(data) {
     (data.opportunities||[]).forEach((o,i) => {
       const d = document.createElement('div');
       d.className = `r-opp-card fade-up d${i+1}`;
+      const ctaHref = o.href || o.url || '#';
       d.innerHTML = `
         <div class="r-top">
           <div class="r-title"><span style="font-size:11px;color:var(--muted);font-weight:400;">0${i+1} &nbsp;</span>${o.title}</div>
@@ -1695,7 +1943,7 @@ function renderResult(data) {
         </div>
         <div class="r-desc">${o.description}</div>
         <div class="r-fit">${o.fit}</div>
-        <a class="r-cta">${o.cta} →</a>
+        <a class="r-cta" href="${ctaHref}" target="_blank" rel="noopener">${o.cta} →</a>
       `;
       cards.appendChild(d);
     });
