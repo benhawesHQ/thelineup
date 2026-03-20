@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import styles from "./page.module.css"
+import { useState, useCallback } from "react"
 import { Chatbot } from "@/components/chatbot"
 
 type Page = "home" | "survey" | "result"
@@ -289,558 +288,520 @@ Generate 5 real, specific opportunities. Reference real organizations, real publ
     }
   }
 
+  const interests = ["Speaking", "Podcasting", "Writing", "Content Creation", "Events & Networking", "Comedy", "Startups", "Journalism", "Film & Video", "Music", "Design", "Tech"]
+  const topics = ["AI & Technology", "Marketing", "Culture & Society", "Sustainability", "Health & Wellness", "Finance & Business", "Education", "Social Justice", "Science", "Food & Hospitality", "Sports", "History & Politics"]
+
   return (
     <>
       {/* HOME PAGE */}
       {currentPage === "home" && (
-        <div id="page-home">
-          <div className={styles.topBar}>
-            <span className={styles.emoji}>🎉</span> <strong>Free for 4 weeks</strong> — No credit card needed. Just show up on Monday.
+        <div>
+          {/* Top Bar */}
+          <div className="bg-black text-white text-center py-3 px-4 text-sm">
+            <span className="mr-2">🎉</span> <strong>Free for 4 weeks</strong> — No credit card needed. Just show up on Monday.
           </div>
 
-          <nav className={styles.nav}>
-            <div className={styles.logo}>
-              The <span>Lineup</span>
+          {/* Nav */}
+          <nav className="flex items-center justify-between px-6 md:px-12 py-5 bg-off-white sticky top-0 z-50 border-b border-border">
+            <div className="font-serif text-xl md:text-2xl font-bold text-black">
+              The <span className="gradient-text">Lineup</span>
             </div>
-            <div className={styles.navRight}>
-              <a href="#how-it-works" className={styles.navLink}>How It Works</a>
-              <a href="#pricing" className={styles.navLink}>Pricing</a>
-              <a href="#founder" className={styles.navLink}>About</a>
-              <button className={styles.btnNav} onClick={showSurvey}>Get My Lineup →</button>
+            <div className="hidden md:flex items-center gap-8">
+              <a href="#how-it-works" className="text-muted hover:text-foreground text-sm font-medium transition-colors">How It Works</a>
+              <a href="#pricing" className="text-muted hover:text-foreground text-sm font-medium transition-colors">Pricing</a>
+              <a href="#founder" className="text-muted hover:text-foreground text-sm font-medium transition-colors">About</a>
+              <button onClick={showSurvey} className="bg-black text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-black/80 transition-colors">
+                Get My Lineup →
+              </button>
             </div>
           </nav>
 
-          {/* HERO */}
-          <section>
-            <div className={styles.hero}>
-              <div className={styles.heroLeft}>
-                <div className={styles.heroKicker}>Every Monday Morning</div>
-                <h1 className={styles.h1}>
-                  5 opportunities<br />you'd <em>never</em><br />find yourself.
+          {/* Hero */}
+          <section className="px-6 md:px-12 py-16 md:py-24">
+            <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="inline-block bg-cream text-orange text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full mb-6">
+                  Every Monday Morning
+                </div>
+                <h1 className="font-serif text-4xl md:text-6xl font-bold leading-tight mb-6 text-balance">
+                  5 opportunities<br />you'd <em className="text-orange">never</em><br />find yourself.
                 </h1>
-                <p className={styles.heroSub}>
+                <p className="text-lg text-muted mb-8 max-w-lg leading-relaxed">
                   Speaking gigs. Podcast guest spots. Writing opportunities. Fellowships. Networking events.{" "}
-                  <strong>Curated specifically for you</strong> — based on your goals, your topics, your ambitions.
+                  <strong className="text-foreground">Curated specifically for you</strong> — based on your goals, your topics, your ambitions.
                 </p>
-                <button className={styles.btnPrimary} onClick={showSurvey}>
+                <button onClick={showSurvey} className="bg-gradient-to-r from-orange via-pink to-purple text-white px-8 py-4 rounded-full text-base font-bold flex items-center gap-3 hover:scale-105 transition-transform shadow-lg shadow-orange/30">
                   Start My Free 4-Week Trial
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M3 8h10M9 4l4 4-4 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
-                <span className={styles.ctaFine}>
-                  4 weeks free, then <strong>$9/month</strong>. Cancel anytime.
-                </span>
+                <p className="text-sm text-muted mt-4">
+                  4 weeks free, then <strong className="text-foreground">$9/month</strong>. Cancel anytime.
+                </p>
               </div>
 
-              <div className={styles.heroVisual}>
-                <div className={styles.floatingBadge}>↑ Sent every Monday 8am</div>
-                <div className={styles.emailPreviewCard}>
-                  <div className={styles.epHeader}>
-                    <div className={styles.epAvatar}>TL</div>
-                    <div className={styles.epMeta}>
-                      <div className={styles.epFrom}>The Lineup by Ben Hawes</div>
-                      <div className={styles.epSubject}>Your Lineup is here — March 17</div>
+              <div className="relative">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-black text-white text-xs font-semibold px-4 py-2 rounded-full z-10">
+                  ↑ Sent every Monday 8am
+                </div>
+                <div className="bg-white rounded-2xl shadow-2xl p-6 border border-border">
+                  <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange to-pink flex items-center justify-center text-white font-bold text-sm">TL</div>
+                    <div>
+                      <div className="font-semibold text-sm">The Lineup by Ben Hawes</div>
+                      <div className="text-xs text-muted">Your Lineup is here — March 17</div>
                     </div>
                   </div>
-                  <div className={styles.epBody}>
-                    <div className={styles.epGreeting}>
+                  <div className="space-y-4">
+                    <p className="text-sm">
                       Hey <strong>Jordan</strong> — here are this week's 5 picks to help you land your first speaking gig and grow your audience in the sustainability space.
+                    </p>
+                    <div className="bg-off-white rounded-xl p-4 border border-border">
+                      <div className="flex items-start gap-3">
+                        <span className="text-orange font-bold text-lg">01</span>
+                        <div>
+                          <div className="font-semibold text-sm">GreenBiz Conference — Speaker CFP</div>
+                          <span className="inline-block bg-cream text-orange text-xs font-semibold px-2 py-0.5 rounded-full mt-1">Speaking</span>
+                          <p className="text-xs text-muted mt-2">Deadline April 12. Accepting proposals from sustainability practitioners & founders.</p>
+                          <p className="text-xs text-orange mt-1">↳ This is your fastest path to a stage and your ideal audience in one room.</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className={styles.epOpp}>
-                      <div className={styles.epOppNum}>01</div>
-                      <div className={styles.epOppTitle}>GreenBiz Conference — Speaker CFP</div>
-                      <span className={styles.epOppTag}>Speaking</span>
-                      <div className={styles.epOppDesc}>Deadline April 12. Accepting proposals from sustainability practitioners & founders.</div>
-                      <div className={styles.epOppFit}>↳ This is your fastest path to a stage and your ideal audience in one room.</div>
+                    <div className="bg-off-white rounded-xl p-4 border border-border">
+                      <div className="flex items-start gap-3">
+                        <span className="text-orange font-bold text-lg">02</span>
+                        <div>
+                          <div className="font-semibold text-sm">How to Save a Planet Podcast — Guest Pitch</div>
+                          <span className="inline-block bg-cream text-orange text-xs font-semibold px-2 py-0.5 rounded-full mt-1">Podcast</span>
+                          <p className="text-xs text-muted mt-2">{"Gimlet's climate podcast actively takes listener guest suggestions."}</p>
+                          <p className="text-xs text-orange mt-1">↳ Your work on corporate sustainability is exactly what their audience wants to hear.</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className={styles.epOpp}>
-                      <div className={styles.epOppNum}>02</div>
-                      <div className={styles.epOppTitle}>How to Save a Planet Podcast — Guest Pitch</div>
-                      <span className={styles.epOppTag}>Podcast</span>
-                      <div className={styles.epOppDesc}>{"Gimlet's climate podcast actively takes listener guest suggestions."}</div>
-                      <div className={styles.epOppFit}>↳ Your work on corporate sustainability is exactly what their audience wants to hear.</div>
-                    </div>
-                    <div className={styles.epMore}>+ 3 more opportunities inside →</div>
+                    <div className="text-center text-sm font-medium text-orange">+ 3 more opportunities inside →</div>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* THE PITCH */}
-          <section className={styles.pitchSection}>
-            <div className={styles.sectionInner}>
-              <div className={styles.pitchGrid}>
-                <div className={styles.pitchLeft}>
-                  <div className={styles.sectionKicker} style={{ color: "rgba(249,69,1,0.8)" }}>The Real Talk</div>
-                  <h2 className={styles.h2}>
-                    Building an audience isn't just about <em>posting online.</em>
-                  </h2>
-                  <div className={styles.pitchBody}>
-                    <p>
-                      The creators, founders, and professionals who actually <strong>break through</strong> aren't just grinding away on social media. They're showing up where it counts:
-                    </p>
-                    <p>
-                      <strong>On stages.</strong> In podcast feeds. As bylines in industry publications. As guests in newsletters. As the person in the room that everyone wants to talk to.
-                    </p>
-                    <p>
-                      The problem? Finding those opportunities is a full-time job. Deadlines get missed. Applications slip through the cracks. You never know what you don't know.
-                    </p>
-                    <p>
-                      <strong>{"That's exactly what The Lineup fixes."}</strong> Every week, a fresh set of real, specific, timely opportunities — matched to your goals, your industry, your ambitions — lands in your inbox before you've even had your coffee.
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <div className={styles.pitchStats}>
-                    <div className={styles.statBox}>
-                      <div className={styles.statNum}>5</div>
-                      <div className={styles.statLabel}>Curated opportunities every single Monday</div>
-                    </div>
-                    <div className={styles.statBox}>
-                      <div className={styles.statNum}>20</div>
-                      <div className={styles.statLabel}>Opportunities per month, all matched to you</div>
-                    </div>
-                    <div className={styles.statBox}>
-                      <div className={styles.statNum}>$9</div>
-                      <div className={styles.statLabel}>Per month after your free trial</div>
-                    </div>
-                    <div className={styles.statBox}>
-                      <div className={styles.statNum}>0</div>
-                      <div className={styles.statLabel}>{"Hours spent searching. That's the whole point."}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* HOW IT WORKS */}
-          <section className={styles.stepsSection} id="how-it-works">
-            <div className={styles.sectionInner}>
-              <div className={styles.stepsHeader}>
-                <div className={styles.sectionKicker}>The Process</div>
-                <h2 className={styles.h2}>
-                  From sign-up to <em>opportunity</em>
-                  <br />
-                  in minutes.
+          {/* Pitch Section */}
+          <section className="bg-black text-white px-6 md:px-12 py-20">
+            <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16">
+              <div>
+                <div className="text-orange/80 text-xs font-bold uppercase tracking-wider mb-4">The Real Talk</div>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold leading-tight mb-6">
+                  Building an audience isn't just about <em className="text-orange">posting online.</em>
                 </h2>
-                <p>Four steps. No fluff. You go from "just browsing" to getting real opportunities by Monday.</p>
+                <div className="space-y-4 text-white/70 leading-relaxed">
+                  <p>
+                    The creators, founders, and professionals who actually <strong className="text-white">break through</strong> aren't just grinding away on social media. They're showing up where it counts:
+                  </p>
+                  <p>
+                    <strong className="text-white">On stages.</strong> In podcast feeds. As bylines in industry publications. As guests in newsletters. As the person in the room that everyone wants to talk to.
+                  </p>
+                  <p>
+                    The problem? Finding those opportunities is a full-time job. Deadlines get missed. Applications slip through the cracks. You never know what you don't know.
+                  </p>
+                  <p>
+                    <strong className="text-white">{"That's exactly what The Lineup fixes."}</strong> Every week, a fresh set of real, specific, timely opportunities — matched to your goals, your industry, your ambitions — lands in your inbox before you've even had your coffee.
+                  </p>
+                </div>
               </div>
-              <div className={styles.timeline}>
-                <div className={styles.tlStep}>
-                  <div className={styles.tlCircle}>1</div>
-                  <div className={styles.tlTitle}>Tell us about you</div>
-                  <div className={styles.tlDesc}>A 2-minute setup. Your interests, goals, topics, and what's been blocking you.</div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                  <div className="font-serif text-5xl font-bold gradient-text mb-2">5</div>
+                  <div className="text-sm text-white/60">Curated opportunities every single Monday</div>
                 </div>
-                <div className={styles.tlStep}>
-                  <div className={styles.tlCircle}>2</div>
-                  <div className={styles.tlTitle}>We do the search</div>
-                  <div className={styles.tlDesc}>We scan speaking calls, podcast openings, writing briefs, grants, and events across the web.</div>
+                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                  <div className="font-serif text-5xl font-bold gradient-text mb-2">20</div>
+                  <div className="text-sm text-white/60">Opportunities per month, all matched to you</div>
                 </div>
-                <div className={styles.tlStep}>
-                  <div className={styles.tlCircle}>3</div>
-                  <div className={styles.tlTitle}>Your Lineup gets built</div>
-                  <div className={styles.tlDesc}>5 opportunities are handpicked and explained — including exactly why each one fits you.</div>
+                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                  <div className="font-serif text-5xl font-bold gradient-text mb-2">$9</div>
+                  <div className="text-sm text-white/60">Per month after your free trial</div>
                 </div>
-                <div className={styles.tlStep}>
-                  <div className={styles.tlCircle}>4</div>
-                  <div className={styles.tlTitle}>Monday morning magic</div>
-                  <div className={styles.tlDesc}>Your Lineup hits your inbox at 8am. Click. Apply. Show up. Repeat every week.</div>
+                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                  <div className="font-serif text-5xl font-bold gradient-text mb-2">0</div>
+                  <div className="text-sm text-white/60">{"Hours spent searching. That's the whole point."}</div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* WHY IT WORKS */}
-          <section style={{ background: "var(--off-white)" }}>
-            <div className={styles.sectionInner}>
-              <div className={styles.sectionKicker}>Why It Works</div>
-              <h2 className={styles.h2}>
-                {"It's for people who are"} <em>building something.</em>
+          {/* How It Works */}
+          <section id="how-it-works" className="px-6 md:px-12 py-20 bg-off-white">
+            <div className="max-w-4xl mx-auto text-center mb-16">
+              <div className="text-orange text-xs font-bold uppercase tracking-wider mb-4">The Process</div>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold leading-tight mb-4">
+                From sign-up to <em className="text-orange">opportunity</em><br />in minutes.
               </h2>
-              <div className={styles.whyGrid}>
-                <div className={styles.whyCard}>
-                  <span className={styles.whyIcon}>🎤</span>
-                  <div className={styles.whyTitle}>Speakers & Panelists</div>
-                  <div className={styles.whyDesc}>CFPs open and close fast. We catch them before they're gone — conferences, summits, panels — filtered for your industry and expertise level.</div>
+              <p className="text-muted">Four steps. No fluff. You go from "just browsing" to getting real opportunities by Monday.</p>
+            </div>
+            <div className="max-w-3xl mx-auto grid md:grid-cols-4 gap-8">
+              {[
+                ["1", "Tell us about you", "A 2-minute setup. Your interests, goals, topics, and what's been blocking you."],
+                ["2", "We do the search", "We scan speaking calls, podcast openings, writing briefs, grants, and events across the web."],
+                ["3", "Your Lineup gets built", "5 opportunities are handpicked and explained — including exactly why each one fits you."],
+                ["4", "Monday delivery", "Your Lineup arrives 8am every Monday. No fluff, no spam — just moves you can make this week."],
+              ].map(([num, title, desc]) => (
+                <div key={num} className="text-center">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-orange to-pink text-white font-bold text-lg flex items-center justify-center mx-auto mb-4">{num}</div>
+                  <div className="font-semibold mb-2">{title}</div>
+                  <div className="text-sm text-muted">{desc}</div>
                 </div>
-                <div className={styles.whyCard}>
-                  <span className={styles.whyIcon}>🎙️</span>
-                  <div className={styles.whyTitle}>Podcast Guests</div>
-                  <div className={styles.whyDesc}>Guesting on podcasts is one of the fastest ways to build an audience. We find shows actively looking for people with your story.</div>
-                </div>
-                <div className={styles.whyCard}>
-                  <span className={styles.whyIcon}>✍️</span>
-                  <div className={styles.whyTitle}>Writers & Byliners</div>
-                  <div className={styles.whyDesc}>Have a business or expertise? Writing for industry publications builds credibility fast. We surface briefs, calls for submissions, and guest post opportunities.</div>
-                </div>
-                <div className={styles.whyCard}>
-                  <span className={styles.whyIcon}>🚀</span>
-                  <div className={styles.whyTitle}>Founders & Operators</div>
-                  <div className={styles.whyDesc}>The best founders are visible ones. We find fellowships, startup competitions, speaking invites, and press opportunities your competitors are missing.</div>
-                </div>
-                <div className={styles.whyCard}>
-                  <span className={styles.whyIcon}>🌐</span>
-                  <div className={styles.whyTitle}>Online Creators Going IRL</div>
-                  <div className={styles.whyDesc}>Online presence is one thing. Walking into a room that already knows your name is another. Events and live stages take you from follower count to real relationships.</div>
-                </div>
-                <div className={styles.whyCard}>
-                  <span className={styles.whyIcon}>💼</span>
-                  <div className={styles.whyTitle}>Career Builders</div>
-                  <div className={styles.whyDesc}>Fellowships, grants, networking events, job opportunities in your niche — we find the things that move careers forward that job boards will never show you.</div>
-                </div>
-              </div>
+              ))}
             </div>
           </section>
 
-          {/* PRICING */}
-          <section className={styles.pricingSection} id="pricing">
-            <div className={styles.sectionInner} style={{ textAlign: "center" }}>
-              <div className={styles.sectionKicker}>Simple Pricing</div>
-              <h2 className={styles.h2}>Try it free. Keep it if you love it.</h2>
-              <p className={styles.pricingIntro}>4 weeks on us. No credit card needed. If The Lineup helps you land even one opportunity — it's already paid for itself many times over.</p>
-
-              <div className={styles.pricingCard}>
-                <div className={styles.pricingBadge}>🎉 4 Weeks Free, Then...</div>
-                <div className={styles.pricingPrice}>
-                  <sup>$</sup>9
+          {/* Pricing */}
+          <section id="pricing" className="px-6 md:px-12 py-20 bg-cream">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <div className="text-orange text-xs font-bold uppercase tracking-wider mb-4">Simple Pricing</div>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">
+                  Start free. Stay for <em className="text-orange">results.</em>
+                </h2>
+              </div>
+              <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl max-w-xl mx-auto text-center border border-border">
+                <div className="text-sm text-orange font-bold mb-2">4 Weeks Free</div>
+                <div className="flex items-baseline justify-center gap-2 mb-2">
+                  <span className="font-serif text-6xl font-bold">$9</span>
+                  <span className="text-muted">/month</span>
                 </div>
-                <div className={styles.pricingPer}>
-                  per month — <strong>cancel anytime</strong>
-                </div>
-
-                <ul className={styles.pricingList}>
-                  <li>5 curated opportunities delivered every Monday</li>
-                  <li>20 personalized opportunities per month</li>
-                  <li>Every pick matched to your goals, topics & style</li>
-                  <li>Why it fits you — explained in plain language</li>
-                  <li>{"Weekly \"start here\" recommendation from Ben"}</li>
-                  <li>Speaking gigs, podcasts, writing, grants, events & more</li>
-                  <li>Deadlines you'd otherwise miss — surfaced for you</li>
-                  <li>Reply directly to Ben with questions or feedback</li>
+                <p className="text-muted mb-6">after your free trial</p>
+                <ul className="text-left space-y-3 mb-8">
+                  {[
+                    "5 personalized opportunities every Monday",
+                    "Matched to your goals, topics, and ambitions",
+                    "Speaking, podcasts, writing, fellowships, events",
+                    "Explanation of why each opportunity fits you",
+                    "Cancel anytime, no questions asked"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="text-orange mt-0.5">✓</span>
+                      <span className="text-sm">{item}</span>
+                    </li>
+                  ))}
                 </ul>
-
-                <button className={styles.btnPrimary} style={{ width: "100%", justifyContent: "center" }} onClick={showSurvey}>
-                  Start My Free 4 Weeks
+                <button onClick={showSurvey} className="w-full bg-gradient-to-r from-orange via-pink to-purple text-white py-4 rounded-full font-bold text-base hover:scale-105 transition-transform shadow-lg shadow-orange/30">
+                  Start My Free Trial →
                 </button>
-                <p className={styles.pricingNote}>No credit card required for your free trial. After 4 weeks, it's $9/month to keep the Lineups coming.</p>
+                <p className="text-xs text-muted mt-4">No credit card required. Cancel anytime.</p>
               </div>
             </div>
           </section>
 
-          {/* FOUNDER */}
-          <section className={styles.founderSection} id="founder">
-            <div className={styles.sectionInner}>
-              <div className={styles.founderGrid}>
-                <div className={styles.founderLeft}>
-                  <div className={styles.founderPhoto}>
-                    <img
-                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/6_20250824_%C2%A9BrakeThrough%20Media_543A2208.JPG-TrE5dHbpudcCyu7LdOpvmz6N22hhUu.jpeg"
-                      alt="Ben Hawes holding photo booth pictures in front of gold tinsel backdrop"
-                    />
-                  </div>
-                  <div className={styles.founderTag}>👋 Made in NYC</div>
+          {/* Founder */}
+          <section id="founder" className="px-6 md:px-12 py-20 bg-off-white">
+            <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+              <div className="aspect-[3/4] rounded-2xl overflow-hidden">
+                <img 
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/6_20250824_%C2%A9BrakeThrough%20Media_543A2208.JPG-TrE5dHbpudcCyu7LdOpvmz6N22hhUu.jpeg" 
+                  alt="Ben Hawes holding photo booth pictures in front of gold tinsel backdrop"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+              <div>
+                <div className="text-orange text-xs font-bold uppercase tracking-wider mb-4">Meet the Founder</div>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6">
+                  {"I'm Ben."}<br />
+                  <em className="text-orange">This is personal.</em>
+                </h2>
+                <div className="space-y-4 text-muted leading-relaxed">
+                  <p>
+                    I spent years in People/HR at companies like <strong className="text-foreground">Rocket Money</strong>, helping others build their careers. On the side, I run one of NYC's busiest photo booth companies — so I know what it means to hustle.
+                  </p>
+                  <p>
+                    What I kept noticing: <strong className="text-foreground">The biggest opportunities aren't posted on job boards.</strong> They're scattered across a hundred different sites, newsletters, and Twitter threads. If you don't know where to look, you miss them.
+                  </p>
+                  <p>
+                    The Lineup is the service I wish I had. Every week, I dig through the noise so you don't have to — and I send you only the stuff that actually fits your goals.
+                  </p>
                 </div>
-                <div className={styles.founderRight}>
-                  <div className={styles.sectionKicker} style={{ color: "rgba(249,69,1,0.8)" }}>From Ben</div>
-                  <h2 className={styles.h2} style={{ color: "white" }}>
-                    I built this because
-                    <br />I <em style={{ color: "var(--pink)" }}>needed</em> it myself.
-                  </h2>
-                  <div className={styles.founderBody}>
-                    <p>
-                      I work on People Team & Enablement Tools at Rocket Money. I also run a <strong>successful photo booth events business here in NYC.</strong> I'm building my personal brand — and honestly? I've been doing this stuff for a while.
-                    </p>
-                    <div className={styles.founderQuote}>
-                      "I kept missing speaking deadlines. Podcast opportunities. Writing calls. Not because I wasn't interested — because I never knew they existed until it was too late."
-                    </div>
-                    <p>
-                      So I built a system that does the searching for me. I pull opportunities from across the web — conferences, podcasts, fellowships, industry publications — and filter them down to what actually makes sense for my goals that week.
-                    </p>
-                    <p>
-                      <strong>The results were immediate.</strong> I started landing speaking gigs and podcast appearances I would have never found. Deadlines I would have missed showed up in my inbox before they closed.
-                    </p>
-                    <p>
-                      I realized this wasn't just useful for me. If you're building a personal brand — whether you're a founder, a creator, a career climber, or someone who just has something to say — you need this flow.
-                    </p>
-                    <p>
-                      So I turned it into The Lineup. <strong>Brought to you by Ben Hawes HQ.</strong> Built for people like you.
-                    </p>
-                  </div>
-                  <div className={styles.founderBadges}>
-                    <div className={styles.founderBadge}>🚀 Rocket Money</div>
-                    <div className={styles.founderBadge}>📸 NYC Photo Booth Events</div>
-                    <div className={styles.founderBadge}>🎤 Speaker</div>
-                    <div className={styles.founderBadge}>🎙️ Podcast Guest</div>
-                    <div className={styles.founderBadge}>📍 New York City</div>
+                <div className="mt-8 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-orange to-pink flex items-center justify-center text-white font-bold">BH</div>
+                  <div>
+                    <div className="font-semibold">Ben Hawes</div>
+                    <div className="text-sm text-muted">Founder, The Lineup</div>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* SOCIAL PROOF */}
-          <section className={styles.proofSection}>
-            <div className={styles.sectionInner} style={{ textAlign: "center" }}>
-              <div className={styles.sectionKicker}>Early Members Say</div>
-              <h2 className={styles.h2}>
-                Real people. <em>Real moves.</em>
+          {/* Final CTA */}
+          <section className="px-6 md:px-12 py-20 bg-black text-white text-center">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6">
+                Ready to stop scrolling and<br /><em className="text-orange">start showing up?</em>
               </h2>
-              <div className={styles.proofCards}>
-                <div className={styles.proofCard}>
-                  <div className={styles.proofStars}>★★★★★</div>
-                  <div className={styles.proofText}>"I applied to a speaking opportunity I found in my first Lineup. It was exactly the kind of conference I'd been hoping to speak at — and I'd never heard of it before."</div>
-                  <div className={styles.proofAuthor}>
-                    <span>Tanya R.</span>Marketing Consultant, Brooklyn
-                  </div>
-                </div>
-                <div className={styles.proofCard}>
-                  <div className={styles.proofStars}>★★★★★</div>
-                  <div className={styles.proofText}>"The podcast guest pitch in my second Lineup turned into an actual booking. That episode drove more new followers than 6 months of posting on my own."</div>
-                  <div className={styles.proofAuthor}>
-                    <span>Derek M.</span>SaaS Founder, NYC
-                  </div>
-                </div>
-                <div className={styles.proofCard}>
-                  <div className={styles.proofStars}>★★★★★</div>
-                  <div className={styles.proofText}>"What gets me is the 'why it fits you' part. It doesn't feel like a random list — it feels like someone who knows me found these specifically for me."</div>
-                  <div className={styles.proofAuthor}>
-                    <span>Priya S.</span>Writer & Brand Strategist
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* FINAL CTA */}
-          <section className={styles.finalCtaSection}>
-            <div className={styles.sectionInner} style={{ padding: "100px 48px", textAlign: "center" }}>
-              <h2 className={styles.h2} style={{ color: "white", fontSize: "clamp(36px, 5vw, 56px)" }}>
-                Your next opportunity
-                <br />
-                is out there. Let's <em style={{ color: "var(--pink)" }}>find it.</em>
-              </h2>
-              <p style={{ fontSize: "18px", color: "rgba(255,255,255,0.55)", maxWidth: "500px", margin: "0 auto 48px", fontWeight: 300 }}>
-                Takes 2 minutes to set up. First Lineup hits your inbox by Monday. 4 weeks free — no card needed.
+              <p className="text-white/70 mb-8">
+                Your first Lineup arrives Monday. 5 real opportunities, matched to you, waiting in your inbox.
               </p>
-              <button className={styles.btnPrimary} style={{ fontSize: "17px", padding: "20px 44px" }} onClick={showSurvey}>
-                Get My First Lineup Free
-                <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+              <button onClick={showSurvey} className="bg-gradient-to-r from-orange via-pink to-purple text-white px-8 py-4 rounded-full font-bold text-base hover:scale-105 transition-transform shadow-lg shadow-orange/30">
+                Get My First Lineup Free →
               </button>
-              <div style={{ marginTop: "16px", fontSize: "13px", color: "rgba(255,255,255,0.35)" }}>Have questions? Reply to any email — Ben reads every single one.</div>
             </div>
           </section>
 
-          <footer className={styles.footer}>
-            <div className={styles.footerLogo}>
-              The <span>Lineup</span>
+          {/* Footer */}
+          <footer className="px-6 md:px-12 py-8 bg-black text-white/50 border-t border-white/10">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="font-serif text-lg font-bold text-white">
+                The <span className="gradient-text">Lineup</span>
+              </div>
+              <div className="text-sm">© 2024 The Lineup. Made in NYC.</div>
             </div>
-            <div className={styles.footerText}>
-              Built by <a href="#founder">Ben Hawes HQ</a> · New York City · <a href="mailto:lineup@benhaweHQ.co">lineup@benhaweHQ.co</a>
-            </div>
-            <div className={styles.footerText}>© 2025 Ben Hawes HQ</div>
           </footer>
+
+          {/* Chatbot */}
+          <Chatbot onComplete={handleChatComplete} />
         </div>
       )}
 
       {/* SURVEY PAGE */}
       {currentPage === "survey" && (
-        <div id="page-survey">
-          <div className={styles.surveyPageWrap}>
-            <div className={styles.surveyHeader}>
-              <div className={styles.logo}>
-                The <span>Lineup</span>
+        <div className="min-h-screen bg-off-white">
+          <nav className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-border">
+            <button onClick={showHome} className="font-serif text-xl font-bold text-black">
+              The <span className="gradient-text">Lineup</span>
+            </button>
+          </nav>
+
+          <div className="max-w-2xl mx-auto px-6 py-12">
+            {/* Progress */}
+            <div className="mb-8">
+              <div className="flex justify-between text-sm text-muted mb-2">
+                <span>{stepMeta[step - 1][0]}</span>
+                <span>{step}/4</span>
               </div>
-              <button className={styles.btnBack} onClick={showHome}>
-                ← Back to home
-              </button>
-            </div>
-            <div className={styles.surveyContainer}>
-              <div className={styles.progressBarWrap}>
-                <div className={styles.progressBarFill} style={{ width: `${(step / 4) * 100}%` }} />
+              <div className="h-1 bg-border rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-orange to-pink transition-all" style={{ width: `${(step / 4) * 100}%` }} />
               </div>
-              <div className={styles.surveyStepLabel}>{stepMeta[step - 1][0]}</div>
-              <div className={styles.surveyStepTitle}>{stepMeta[step - 1][1]}</div>
-              <div className={styles.surveyStepSub}>{stepMeta[step - 1][2]}</div>
-
-              {/* Step 1 */}
-              {step === 1 && (
-                <div>
-                  <div className={styles.formGroup}>
-                    <label>First Name</label>
-                    <input type="text" placeholder="e.g. Jordan" value={userData.name} onChange={(e) => setUserData((p) => ({ ...p, name: e.target.value }))} />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Email Address</label>
-                    <input type="email" placeholder="you@example.com" value={userData.email} onChange={(e) => setUserData((p) => ({ ...p, email: e.target.value }))} />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Location (optional — helps us find local events)</label>
-                    <input type="text" placeholder="e.g. New York, NY" value={userData.location} onChange={(e) => setUserData((p) => ({ ...p, location: e.target.value }))} />
-                  </div>
-                  <div className={styles.surveyNav}>
-                    <button className={styles.btnNext} onClick={() => goStep(2)}>
-                      Continue →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 2 */}
-              {step === 2 && (
-                <div>
-                  <div className={styles.formGroup}>
-                    <label>{"I'm interested in (pick all that apply)"}</label>
-                    <div className={styles.chipsWrap}>
-                      {["Speaking", "Podcasting", "Writing", "Content Creation", "Comedy", "Events & Networking", "Startups & Entrepreneurship", "Journalism", "Film & Video", "Music", "Design & Creative", "Tech"].map((c) => (
-                        <button key={c} className={`${styles.chip} ${userData.interests.includes(c) ? styles.selected : ""}`} onClick={() => toggleChip("interests", c)}>
-                          {c}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className={styles.formGroup} style={{ marginTop: "28px" }}>
-                    <label>Topics I care about</label>
-                    <div className={styles.chipsWrap}>
-                      {["AI & Technology", "Marketing", "Culture & Society", "Sustainability", "Health & Wellness", "Finance & Business", "Education", "Social Justice", "Space & Science", "Food & Hospitality", "Sports", "History & Politics"].map((c) => (
-                        <button key={c} className={`${styles.chip} ${userData.topics.includes(c) ? styles.selected : ""}`} onClick={() => toggleChip("topics", c)}>
-                          {c}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className={styles.surveyNav}>
-                    <button className={styles.btnBack} onClick={() => goStep(1)}>
-                      ← Back
-                    </button>
-                    <button className={styles.btnNext} onClick={() => goStep(3)}>
-                      Continue →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 3 */}
-              {step === 3 && (
-                <div>
-                  <div className={styles.formGroup}>
-                    <label>My main goal right now</label>
-                    <textarea rows={3} placeholder="e.g. Get booked on my first podcast, land a speaking gig at a marketing conference, grow my newsletter to 5,000 subscribers, publish my book..." value={userData.goal} onChange={(e) => setUserData((p) => ({ ...p, goal: e.target.value }))} />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>{"What's been blocking me"}</label>
-                    <textarea rows={3} placeholder="e.g. I don't know where to look, I haven't built an audience yet, I'm not sure how to pitch myself, I keep missing deadlines..." value={userData.blocker} onChange={(e) => setUserData((p) => ({ ...p, blocker: e.target.value }))} />
-                  </div>
-                  <div className={styles.surveyNav}>
-                    <button className={styles.btnBack} onClick={() => goStep(2)}>
-                      ← Back
-                    </button>
-                    <button className={styles.btnNext} onClick={() => goStep(4)}>
-                      Continue →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 4 */}
-              {step === 4 && (
-                <div>
-                  <div className={styles.formGroup}>
-                    <label>Anything else that would help me find the right stuff?</label>
-                    <textarea rows={5} placeholder="Tell me more — your background, your vibe, what you've already tried, what you're sick of seeing, what a win looks like for you. The more I know, the better your Lineup." value={userData.extra} onChange={(e) => setUserData((p) => ({ ...p, extra: e.target.value }))} />
-                  </div>
-                  <div className={styles.surveyNav}>
-                    <button className={styles.btnBack} onClick={() => goStep(3)}>
-                      ← Back
-                    </button>
-                    <button className={`${styles.btnNext} ${styles.grad}`} onClick={buildLineup}>
-                      Build My Lineup 🎯
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
+
+            <h2 className="font-serif text-3xl font-bold mb-2">{stepMeta[step - 1][1]}</h2>
+            <p className="text-muted mb-8">{stepMeta[step - 1][2]}</p>
+
+            {/* Step 1 */}
+            {step === 1 && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">First name</label>
+                  <input
+                    type="text"
+                    value={userData.name}
+                    onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:outline-none focus:border-orange text-base"
+                    placeholder="Your first name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={userData.email}
+                    onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:outline-none focus:border-orange text-base"
+                    placeholder="you@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Location (optional)</label>
+                  <input
+                    type="text"
+                    value={userData.location}
+                    onChange={(e) => setUserData({ ...userData, location: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:outline-none focus:border-orange text-base"
+                    placeholder="City, State or 'Remote'"
+                  />
+                </div>
+                <button onClick={() => goStep(2)} className="w-full bg-black text-white py-4 rounded-full font-semibold hover:bg-black/80 transition-colors">
+                  Continue →
+                </button>
+              </div>
+            )}
+
+            {/* Step 2 */}
+            {step === 2 && (
+              <div className="space-y-8">
+                <div>
+                  <label className="block text-sm font-medium mb-4">What kinds of opportunities interest you?</label>
+                  <div className="flex flex-wrap gap-2">
+                    {interests.map((item) => (
+                      <button
+                        key={item}
+                        onClick={() => toggleChip("interests", item)}
+                        className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${
+                          userData.interests.includes(item)
+                            ? "border-orange bg-orange/10 text-orange"
+                            : "border-border hover:border-orange/50"
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-4">What topics are you passionate about?</label>
+                  <div className="flex flex-wrap gap-2">
+                    {topics.map((item) => (
+                      <button
+                        key={item}
+                        onClick={() => toggleChip("topics", item)}
+                        className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${
+                          userData.topics.includes(item)
+                            ? "border-orange bg-orange/10 text-orange"
+                            : "border-border hover:border-orange/50"
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <button onClick={() => goStep(1)} className="flex-1 py-4 rounded-full border border-border font-semibold hover:bg-white transition-colors">
+                    ← Back
+                  </button>
+                  <button onClick={() => goStep(3)} className="flex-1 bg-black text-white py-4 rounded-full font-semibold hover:bg-black/80 transition-colors">
+                    Continue →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3 */}
+            {step === 3 && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">What's your main goal right now?</label>
+                  <textarea
+                    value={userData.goal}
+                    onChange={(e) => setUserData({ ...userData, goal: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:outline-none focus:border-orange text-base min-h-[120px] resize-none"
+                    placeholder="Be specific! 'Land my first TEDx talk' is better than 'speak more'"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">What's been getting in the way?</label>
+                  <textarea
+                    value={userData.blocker}
+                    onChange={(e) => setUserData({ ...userData, blocker: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:outline-none focus:border-orange text-base min-h-[100px] resize-none"
+                    placeholder="What's stopped you from making progress?"
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <button onClick={() => goStep(2)} className="flex-1 py-4 rounded-full border border-border font-semibold hover:bg-white transition-colors">
+                    ← Back
+                  </button>
+                  <button onClick={() => goStep(4)} className="flex-1 bg-black text-white py-4 rounded-full font-semibold hover:bg-black/80 transition-colors">
+                    Continue →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4 */}
+            {step === 4 && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Anything else I should know? (optional)</label>
+                  <textarea
+                    value={userData.extra}
+                    onChange={(e) => setUserData({ ...userData, extra: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:outline-none focus:border-orange text-base min-h-[150px] resize-none"
+                    placeholder="Your background, what you've tried, what makes you *you*..."
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <button onClick={() => goStep(3)} className="flex-1 py-4 rounded-full border border-border font-semibold hover:bg-white transition-colors">
+                    ← Back
+                  </button>
+                  <button onClick={buildLineup} className="flex-1 bg-gradient-to-r from-orange via-pink to-purple text-white py-4 rounded-full font-semibold hover:scale-105 transition-transform shadow-lg shadow-orange/30">
+                    Build My Lineup →
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {/* RESULT PAGE */}
       {currentPage === "result" && (
-        <div id="page-result">
-          <div className={styles.resultPageBg}>
-            <div className={styles.surveyHeader}>
-              <div className={styles.logo}>
-                The <span>Lineup</span>
-              </div>
-              <button className={styles.btnBack} onClick={showHome}>
-                ← Start over
-              </button>
-            </div>
-            <div className={styles.resultContainer}>
-              {loading ? (
-                <div className={styles.loadingCenter}>
-                  <div className={styles.loader} />
-                  <div className={styles.loadLabel}>{loadMessage || "Searching for opportunities that match your goals..."}</div>
-                  <div className={styles.loadBarWrap}>
-                    <div className={styles.loadBar} style={{ width: `${loadProgress}%` }} />
-                  </div>
+        <div className="min-h-screen bg-off-white">
+          <nav className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-border">
+            <button onClick={showHome} className="font-serif text-xl font-bold text-black">
+              The <span className="gradient-text">Lineup</span>
+            </button>
+          </nav>
+
+          <div className="max-w-3xl mx-auto px-6 py-12">
+            {loading ? (
+              <div className="text-center py-20">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-orange to-pink mb-6 animate-pulse">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="animate-spin">
+                    <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="3" strokeLinecap="round" strokeDasharray="31.4 31.4" strokeDashoffset="10" />
+                  </svg>
                 </div>
-              ) : (
-                result && (
-                  <div>
-                    <div className={`${styles.resultKicker} ${styles.fadeUp} ${styles.d1}`}>Your Lineup is ready</div>
-                    <div
-                      className={`${styles.resultTitle} ${styles.fadeUp} ${styles.d2}`}
-                      dangerouslySetInnerHTML={{
-                        __html: userData.name ? `Hey ${userData.name} —<br />Here are your five.` : "Here are your five.",
-                      }}
-                    />
-                    <div className={`${styles.resultIntro} ${styles.fadeUp} ${styles.d3}`} dangerouslySetInnerHTML={{ __html: result.intro.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") }} />
+                <h2 className="font-serif text-2xl font-bold mb-4">{loadMessage || "Building your Lineup..."}</h2>
+                <div className="max-w-xs mx-auto h-2 bg-border rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-orange to-pink transition-all duration-500" style={{ width: `${loadProgress}%` }} />
+                </div>
+              </div>
+            ) : result ? (
+              <div>
+                <div className="text-center mb-12">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-orange to-pink mb-6">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                      <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <h2 className="font-serif text-3xl font-bold mb-4">Your Lineup is Ready</h2>
+                  <p className="text-muted max-w-lg mx-auto">{result.intro}</p>
+                </div>
 
-                    {result.opportunities.map((o, i) => (
-                      <div key={i} className={`${styles.rOppCard} ${styles.fadeUp}`} style={{ animationDelay: `${0.1 * (i + 1)}s` }}>
-                        <div className={styles.rTop}>
-                          <div className={styles.rTitle}>
-                            <span style={{ fontSize: "11px", color: "var(--muted)", fontWeight: 400 }}>0{i + 1} &nbsp;</span>
-                            {o.title}
+                <div className="space-y-4 mb-12">
+                  {result.opportunities.map((opp, i) => (
+                    <div key={i} className="bg-white rounded-2xl p-6 border border-border hover:shadow-lg transition-shadow">
+                      <div className="flex items-start gap-4">
+                        <span className="text-3xl font-bold gradient-text font-serif">0{i + 1}</span>
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between gap-4 mb-2">
+                            <h3 className="font-semibold text-lg">{opp.title}</h3>
+                            <span className="shrink-0 bg-cream text-orange text-xs font-bold px-3 py-1 rounded-full">{opp.type}</span>
                           </div>
-                          <div className={styles.rBadge}>{o.type}</div>
+                          <p className="text-muted text-sm mb-3">{opp.description}</p>
+                          <p className="text-orange text-sm font-medium">↳ {opp.fit}</p>
                         </div>
-                        <div className={styles.rDesc}>{o.description}</div>
-                        <div className={styles.rFit}>↳ {o.fit}</div>
-                        <a className={styles.rCta}>{o.cta} →</a>
-                      </div>
-                    ))}
-
-                    {result.recommendation && (
-                      <div className={`${styles.rRec} ${styles.fadeUp} ${styles.d6}`}>
-                        <div className={styles.rRecLabel}>{"Ben's take this week"}</div>
-                        <div className={styles.rRecText} dangerouslySetInnerHTML={{ __html: result.recommendation.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") }} />
-                      </div>
-                    )}
-
-                    <div className={`${styles.rConfirm} ${styles.fadeUp}`} style={{ animationDelay: "0.65s" }}>
-                      <div className={styles.rConfirmIcon}>📬</div>
-                      <div className={styles.rConfirmText}>
-                        <strong>{"You're in. Lineups start Monday."}</strong>
-                        {"Your first full Lineup hits your inbox this Monday at 8am. 4 weeks free — after that it's $9/month. You'll never miss an opportunity again."}
-                        <div style={{ marginTop: "10px", fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>Brought to you by Ben Hawes HQ · Have feedback? Just reply to the email.</div>
                       </div>
                     </div>
-                  </div>
-                )
-              )}
-            </div>
+                  ))}
+                </div>
+
+                <div className="bg-black text-white rounded-2xl p-8 mb-8">
+                  <h3 className="font-serif text-xl font-bold mb-3">My Recommendation</h3>
+                  <p className="text-white/80">{result.recommendation}</p>
+                </div>
+
+                <div className="text-center">
+                  <p className="text-muted mb-6">
+                    This is just a preview. Your real Lineup arrives every Monday at 8am with fresh opportunities.
+                  </p>
+                  <button onClick={showHome} className="bg-gradient-to-r from-orange via-pink to-purple text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition-transform shadow-lg shadow-orange/30">
+                    Back to Home
+                  </button>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       )}
-
-      {/* Chatbot Widget */}
-      {currentPage === "home" && <Chatbot onComplete={handleChatComplete} />}
     </>
   )
 }

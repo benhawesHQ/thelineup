@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import styles from "./chatbot.module.css"
 
 interface UserData {
   name: string
@@ -286,104 +285,146 @@ export function Chatbot({ onComplete }: ChatbotProps) {
   }
 
   return (
-    <div className={`${styles.chatbotWidget} ${isOpen ? styles.open : ""} ${teaserHidden ? styles.teaserHidden : ""}`}>
+    <div className={`fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 ${isOpen ? "" : ""}`}>
+      {/* Teaser Bubble */}
       {!teaserHidden && (
-        <div className={styles.chatbotTeaser} onClick={openChatbot}>
-          <div className={styles.chatbotTeaserText}>
-            Ready to get your first <strong>Lineup</strong>?
+        <div 
+          onClick={openChatbot}
+          className="bg-white border border-[var(--border)] rounded-2xl rounded-br-sm p-4 shadow-xl max-w-[260px] cursor-pointer hover:-translate-y-0.5 hover:shadow-2xl transition-all animate-in fade-in slide-in-from-bottom-2 duration-300"
+        >
+          <div className="text-sm font-medium text-foreground">
+            Ready to get your first <strong className="text-orange">Lineup</strong>?
           </div>
-          <div className={styles.chatbotTeaserSub}>Chat with me to get started</div>
+          <div className="text-xs text-muted mt-1">Chat with me to get started</div>
         </div>
       )}
 
-      <div className={styles.chatbotWindow}>
-        <div className={styles.chatbotHeader}>
-          <div className={styles.chatbotAvatar}>BH</div>
-          <div className={styles.chatbotHeaderInfo}>
-            <h4>Ben from The Lineup</h4>
-            <span>Usually replies instantly</span>
-          </div>
-          <div className={styles.chatbotHeaderStatus} />
-        </div>
-
-        <div className={styles.chatbotMessages}>
-          {messages.map((msg, i) => (
-            <div key={i} className={`${styles.chatMsg} ${msg.type === "bot" ? styles.bot : styles.user}`}>
-              <div className={styles.chatMsgAvatar}>{msg.type === "bot" ? "BH" : chatData.name ? chatData.name[0].toUpperCase() : "Y"}</div>
-              <div className={styles.chatMsgContent}>
-                <span dangerouslySetInnerHTML={{ __html: msg.content }} />
-                {msg.hint && <span className={styles.hint}>{msg.hint}</span>}
-                {msg.chips && (
-                  <div className={styles.chatChips}>
-                    {msg.chips.map((chip) => (
-                      <button key={chip} className={`${styles.chatChip} ${selectedChips.includes(chip) ? styles.selected : ""}`} onClick={() => toggleChatChip(chip)}>
-                        {chip}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+      {/* Chat Window */}
+      {isOpen && (
+        <div className="w-[380px] h-[560px] max-w-[calc(100vw-48px)] max-h-[calc(100vh-120px)] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-300">
+          {/* Header */}
+          <div className="bg-black p-5 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange to-pink flex items-center justify-center font-serif font-bold text-white text-sm">BH</div>
+            <div className="flex-1">
+              <h4 className="text-white font-semibold text-sm">Ben from The Lineup</h4>
+              <span className="text-white/50 text-xs">Usually replies instantly</span>
             </div>
-          ))}
-          {isTyping && (
-            <div className={`${styles.chatMsg} ${styles.bot}`}>
-              <div className={styles.chatMsgAvatar}>BH</div>
-              <div className={styles.chatMsgContent}>
-                <div className={styles.chatTyping}>
-                  <span />
-                  <span />
-                  <span />
+            <div className="w-2 h-2 bg-green-400 rounded-full" />
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-off-white">
+            {messages.map((msg, i) => (
+              <div key={i} className={`flex gap-2.5 max-w-[92%] animate-in fade-in slide-in-from-bottom-2 duration-200 ${msg.type === "user" ? "self-end flex-row-reverse ml-auto" : ""}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-serif font-bold text-xs shrink-0 ${msg.type === "bot" ? "bg-gradient-to-r from-orange to-pink text-white" : "bg-black text-white"}`}>
+                  {msg.type === "bot" ? "BH" : chatData.name ? chatData.name[0].toUpperCase() : "Y"}
+                </div>
+                <div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.type === "bot" ? "bg-white border border-[var(--border)] rounded-bl-sm" : "bg-black text-white rounded-br-sm"}`}>
+                  <span dangerouslySetInnerHTML={{ __html: msg.content }} />
+                  {msg.hint && <span className="block mt-2 text-xs text-muted italic">{msg.hint}</span>}
+                  {msg.chips && (
+                    <div className="flex flex-wrap gap-1.5 mt-3">
+                      {msg.chips.map((chip) => (
+                        <button 
+                          key={chip} 
+                          onClick={() => toggleChatChip(chip)}
+                          className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${
+                            selectedChips.includes(chip) 
+                              ? "border-orange bg-orange/10 text-orange" 
+                              : "border-[var(--border)] bg-white text-muted hover:border-orange/50"
+                          }`}
+                        >
+                          {chip}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          )}
-          {showPreviewButton && (
-            <div className={`${styles.chatMsg} ${styles.bot}`}>
-              <div className={styles.chatMsgAvatar}>BH</div>
-              <div className={styles.chatMsgContent}>
-                <button className={styles.previewButton} onClick={handlePreview}>
-                  Show Me My Preview Lineup
-                </button>
+            ))}
+            
+            {/* Typing Indicator */}
+            {isTyping && (
+              <div className="flex gap-2.5 max-w-[92%]">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange to-pink flex items-center justify-center font-serif font-bold text-xs text-white shrink-0">BH</div>
+                <div className="bg-white border border-[var(--border)] rounded-2xl rounded-bl-sm px-4 py-3">
+                  <div className="flex gap-1">
+                    <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-2 h-2 bg-muted rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+            )}
 
-        <div className={styles.chatProgress}>
-          <div className={styles.chatProgressBar}>
-            <div className={styles.chatProgressFill} style={{ width: `${updateProgress()}%` }} />
+            {/* Preview Button */}
+            {showPreviewButton && (
+              <div className="flex gap-2.5 max-w-[92%] animate-in fade-in slide-in-from-bottom-2 duration-200">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange to-pink flex items-center justify-center font-serif font-bold text-xs text-white shrink-0">BH</div>
+                <div className="bg-white border border-[var(--border)] rounded-2xl rounded-bl-sm px-4 py-3">
+                  <button 
+                    onClick={handlePreview}
+                    className="bg-gradient-to-r from-orange via-pink to-purple text-white px-6 py-3 rounded-full font-bold text-sm hover:scale-105 transition-transform"
+                  >
+                    Show Me My Preview Lineup
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
-          <div className={styles.chatProgressText}>{getProgressText()}</div>
-        </div>
 
-        <div className={styles.chatbotInputArea}>
-          <input
-            type="text"
-            className={styles.chatbotInput}
-            placeholder={awaitingChips ? "Select options above, then click send" : "Type your answer..."}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") sendMessage()
-            }}
-            disabled={isComplete}
-          />
-          <button className={styles.chatbotSend} onClick={sendMessage} disabled={isComplete}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-          </button>
-        </div>
-      </div>
+          {/* Progress */}
+          <div className="px-5 pb-3 bg-white">
+            <div className="h-0.5 bg-[var(--border)] rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-orange to-pink transition-all duration-500" 
+                style={{ width: `${updateProgress()}%` }} 
+              />
+            </div>
+            <div className="text-xs text-muted text-center mt-1.5">{getProgressText()}</div>
+          </div>
 
-      <button className={styles.chatbotToggle} onClick={toggleChatbot} aria-label="Chat with us">
-        <svg className={styles.chatIcon} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-        <svg className={styles.closeIcon} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+          {/* Input */}
+          <div className="p-4 bg-white border-t border-[var(--border)] flex gap-2.5">
+            <input
+              type="text"
+              placeholder={awaitingChips ? "Select options above, then click send" : "Type your answer..."}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") sendMessage() }}
+              disabled={isComplete}
+              className="flex-1 px-4 py-3 border border-[var(--border)] rounded-full text-sm focus:outline-none focus:border-orange disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <button 
+              onClick={sendMessage}
+              disabled={isComplete}
+              className="w-11 h-11 rounded-full bg-gradient-to-r from-orange to-pink flex items-center justify-center hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Toggle Button */}
+      <button 
+        onClick={toggleChatbot}
+        className="w-16 h-16 rounded-full bg-gradient-to-r from-orange via-pink to-purple flex items-center justify-center shadow-xl shadow-orange/40 hover:scale-110 transition-transform"
+        aria-label="Chat with us"
+      >
+        {isOpen ? (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2" className="w-7 h-7">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2" className="w-7 h-7">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+        )}
       </button>
     </div>
   )

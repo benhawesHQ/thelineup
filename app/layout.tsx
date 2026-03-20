@@ -30,6 +30,9 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#0C0C0C",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 }
 
 export default function RootLayout({
@@ -38,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${dmSans.variable} ${dmSerif.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${dmSans.variable} ${dmSerif.variable} bg-[#faf8f5]`}>
       <body>{children}</body>
     </html>
   )
