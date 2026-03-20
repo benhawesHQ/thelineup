@@ -906,6 +906,81 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
 .d5 { animation-delay: 0.45s; }
 .d6 { animation-delay: 0.55s; }
 
+/* ─── PAYMENT SECTION ─── */
+.r-payment {
+  background: var(--black);
+  border-radius: 16px;
+  padding: 36px 28px;
+  margin-top: 24px;
+  text-align: center;
+}
+.pay-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 26px;
+  color: white;
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+.pay-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 28px;
+  font-weight: 300;
+  line-height: 1.55;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.btn-pay-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 18px;
+  background: var(--grad);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  text-decoration: none;
+  margin-bottom: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.01em;
+}
+.btn-pay-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(249,69,1,0.4);
+}
+.pay-methods {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 14px;
+  letter-spacing: 0.03em;
+}
+.pay-fine {
+  font-size: 12px;
+  color: rgba(255,255,255,0.25);
+  line-height: 1.6;
+}
+
+/* ─── STICKY MOBILE CTA ─── */
+.sticky-cta-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: var(--off-white);
+  border-top: 1px solid var(--border);
+  z-index: 200;
+}
+
 @media (max-width: 768px) {
   nav { padding: 0 20px; }
   .hero { grid-template-columns: 1fr; padding: 60px 24px 40px; gap: 40px; }
@@ -918,8 +993,10 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
   .founder-grid { grid-template-columns: 1fr; }
   .proof-cards { grid-template-columns: 1fr; }
   .section-inner { padding: 60px 24px; }
-  footer { flex-direction: column; text-align: center; padding: 24px; }
+  footer { flex-direction: column; text-align: center; padding: 24px; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
   .pricing-card { padding: 40px 24px 32px; }
+  .sticky-cta-bar { display: block; }
+  body { padding-bottom: 80px; }
 }
 </style>
 </head>
@@ -929,7 +1006,7 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
 <div id="page-home">
 
 <div class="top-bar">
-  🎉 <strong>Free for 4 weeks</strong> — No credit card needed. Just show up on Monday.
+  🎉 <strong>4 weeks free</strong> · No credit card to start · First Lineup lands Monday morning
 </div>
 
 <nav>
@@ -1002,8 +1079,8 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
     <div class="pitch-body">
       <p>The creators, founders, and professionals who actually <strong>break through</strong> aren't just grinding away on social media. They're showing up where it counts:</p>
       <p><strong>On stages.</strong> In podcast feeds. As bylines in industry publications. As guests in newsletters. As the person in the room that everyone wants to talk to.</p>
-      <p>The problem? Finding those opportunities is a full-time job. Deadlines get missed. Applications slip through the cracks. You never know what you don't know.</p>
-      <p><strong>That's exactly what The Lineup fixes.</strong> Every week, a fresh set of real, specific, timely opportunities — matched to your goals, your industry, your ambitions — lands in your inbox before you've even had your coffee.</p>
+      <p>The problem? Finding those opportunities is a full-time job. Deadlines get missed. Applications fall through the cracks. You never know what you don't know.</p>
+      <p><strong>The Lineup takes care of that.</strong> Every week, a fresh set of real, specific, timely opportunities — matched to your goals, your industry, your ambitions — lands in your inbox before you've even had your coffee.</p>
     </div>
   </div>
   <div>
@@ -1110,8 +1187,8 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
     <div class="section-kicker">What You Actually Get</div>
     <h2>Real opportunities.<br>With <em>real context.</em></h2>
     <p>This isn't a link dump. Each opportunity comes with a description, a deadline, and — most importantly — <strong>a clear explanation of why it fits you specifically.</strong></p>
-    <p>We also give you a short recommendation at the end: which 1-2 opportunities to tackle first and why. Because sometimes the hardest part is just knowing where to start.</p>
-    <p>And if you ever want to give feedback, just <strong>reply directly to the email.</strong> Ben personally reads every reply.</p>
+    <p>Ben also adds a short note at the end: which 1-2 opportunities to go after first and why. Because sometimes the hardest part is just knowing where to start.</p>
+    <p>Want to share feedback? Just <strong>reply to the email.</strong> Ben reads every single one.</p>
   </div>
 
   <div class="full-email-mock">
@@ -1227,12 +1304,12 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
     <div class="section-kicker" style="color: rgba(249,69,1,0.8)">From Ben</div>
     <h2>I built this because<br>I <em>needed</em> it myself.</h2>
     <div class="founder-body">
-      <p>I work on People Team & Enablement Tools at Rocket Money. I also run a <strong>successful photo booth events business here in NYC.</strong> I'm building my personal brand — and honestly? I've been doing this stuff for a while.</p>
-      <div class="founder-quote">"I kept missing speaking deadlines. Podcast opportunities. Writing calls. Not because I wasn't interested — because I never knew they existed until it was too late."</div>
-      <p>So I built a system that does the searching for me. I pull opportunities from across the web — conferences, podcasts, fellowships, industry publications — and filter them down to what actually makes sense for my goals that week.</p>
-      <p><strong>The results were immediate.</strong> I started landing speaking gigs and podcast appearances I would have never found. Deadlines I would have missed showed up in my inbox before they closed.</p>
-      <p>I realized this wasn't just useful for me. If you're building a personal brand — whether you're a founder, a creator, a career climber, or someone who just has something to say — you need this flow.</p>
-      <p>So I turned it into The Lineup. <strong>Brought to you by Ben Hawes HQ.</strong> Built for people like you.</p>
+      <p>I work on People Team & Enablement Tools at Rocket Money. I also run a <strong>photo booth events business here in NYC.</strong> I've been building in public for a while now, and the hardest part was never the work itself.</p>
+      <div class="founder-quote">"I kept missing speaking deadlines. Podcast opportunities. Writing calls. Not because I wasn't interested. I just never knew they existed until it was too late."</div>
+      <p>So I built a system that does the searching for me. I pull opportunities from across the web — conferences, podcasts, fellowships, industry publications — and filter them down to what actually fits my goals that week.</p>
+      <p>Things started moving fast. Speaking gigs and podcast appearances I would have never found started showing up in my inbox. Deadlines I would have missed got surfaced before they closed.</p>
+      <p>I figured if it was working for me, it could work for a lot of people. If you're building a personal brand — whether you're a founder, a creator, a career climber, or someone who just has something to say — this is for you.</p>
+      <p>That's The Lineup. <strong>Built by Ben Hawes HQ, New York City.</strong></p>
     </div>
     <div class="founder-badges">
       <div class="founder-badge">🚀 Rocket Money</div>
@@ -1425,18 +1502,29 @@ input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
         <div class="r-rec-label">Ben's take this week</div>
         <div class="r-rec-text" id="r-rec-text"></div>
       </div>
-      <div class="r-confirm fade-up" style="animation-delay:0.65s;opacity:0;">
-        <div class="r-confirm-icon">📬</div>
-        <div class="r-confirm-text">
-          <strong>You're in. Lineups start Monday.</strong>
-          Your first full Lineup hits your inbox this Monday at 8am. 4 weeks free — after that it's $9/month. You'll never miss an opportunity again.
-          <div style="margin-top:10px;font-size:13px;color:rgba(255,255,255,0.4);">Brought to you by Ben Hawes HQ · Have feedback? Just reply to the email.</div>
-        </div>
+      <div class="r-payment fade-up" style="animation-delay:0.65s;opacity:0;">
+        <div class="pay-heading">Lock in your free trial.</div>
+        <div class="pay-sub">4 weeks free, then $9/month. No charge until your trial ends. Cancel any time from your inbox.</div>
+        <!-- Replace YOUR_STRIPE_PAYMENT_LINK with your Stripe Payment Link URL -->
+        <a href="YOUR_STRIPE_PAYMENT_LINK" class="btn-pay-primary" id="btn-pay">
+          Start My Free Trial
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <div class="pay-methods">Apple Pay · Google Pay · All major cards</div>
+        <div class="pay-fine">You won't be charged for 4 weeks. We'll send a reminder before anything bills.<br>Built by Ben Hawes HQ · Questions? Reply to any email.</div>
       </div>
     </div>
 
   </div>
 </div>
+</div>
+
+<!-- STICKY MOBILE CTA -->
+<div class="sticky-cta-bar" id="sticky-cta">
+  <button class="btn-primary" onclick="showSurvey()" style="width:100%;justify-content:center;font-size:16px;padding:16px 24px;">
+    Get My Lineup Free
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
 </div>
 
 <script>
@@ -1455,12 +1543,14 @@ function showHome() {
   document.getElementById('page-home').style.display='block';
   document.getElementById('page-survey').style.display='none';
   document.getElementById('page-result').style.display='none';
+  document.getElementById('sticky-cta').style.display='';
   window.scrollTo(0,0);
 }
 function showSurvey() {
   document.getElementById('page-home').style.display='none';
   document.getElementById('page-survey').style.display='block';
   document.getElementById('page-result').style.display='none';
+  document.getElementById('sticky-cta').style.display='none';
   window.scrollTo(0,0);
   goStep(1);
 }
@@ -1468,6 +1558,7 @@ function showResult() {
   document.getElementById('page-home').style.display='none';
   document.getElementById('page-survey').style.display='none';
   document.getElementById('page-result').style.display='block';
+  document.getElementById('sticky-cta').style.display='none';
   window.scrollTo(0,0);
 }
 
