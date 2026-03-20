@@ -551,7 +551,7 @@ h2 em {
 }
 .pricing-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
 
-/* ─── FOUNDER ─── */
+/* ─── FOUNDER �����── */
 .founder-section { background: var(--black); color: white; }
 .founder-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: center; }
 .founder-left { position: relative; }
@@ -635,6 +635,325 @@ h2 em {
 .final-cta-section h2 { color: white; font-size: clamp(36px, 5vw, 56px); margin-bottom: 24px; }
 .final-cta-section h2 em { color: var(--pink); }
 .final-cta-section p { font-size: 18px; color: rgba(255,255,255,0.55); max-width: 500px; margin: 0 auto 48px; font-weight: 300; }
+
+/* ─── FLOATING CHATBOT ─── */
+.chatbot-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.chatbot-toggle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--grad);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(249,69,1,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.chatbot-toggle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 40px rgba(249,69,1,0.5);
+}
+.chatbot-toggle svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+.chatbot-toggle .close-icon { display: none; }
+.chatbot-widget.open .chatbot-toggle .chat-icon { display: none; }
+.chatbot-widget.open .chatbot-toggle .close-icon { display: block; }
+
+.chatbot-teaser {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px 16px 4px 16px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  max-width: 260px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: bubbleFadeIn 0.4s ease;
+}
+.chatbot-teaser:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.16);
+}
+.chatbot-teaser-text {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.chatbot-teaser-text strong { color: var(--orange); }
+.chatbot-teaser-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.chatbot-widget.open .chatbot-teaser { display: none; }
+.chatbot-widget.teaser-hidden .chatbot-teaser { display: none; }
+
+.chatbot-window {
+  display: none;
+  width: 380px;
+  height: 560px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.18);
+  overflow: hidden;
+  flex-direction: column;
+  animation: chatSlideUp 0.3s ease;
+}
+.chatbot-widget.open .chatbot-window {
+  display: flex;
+}
+@keyframes chatSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes bubbleFadeIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chatbot-header {
+  background: var(--black);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.chatbot-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--grad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 16px;
+  color: white;
+}
+.chatbot-header-info h4 {
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+.chatbot-header-info span {
+  color: rgba(255,255,255,0.5);
+  font-size: 12px;
+}
+.chatbot-header-status {
+  width: 8px;
+  height: 8px;
+  background: #4ade80;
+  border-radius: 50%;
+  margin-left: auto;
+}
+
+.chatbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--off-white);
+}
+
+.chat-msg {
+  display: flex;
+  gap: 10px;
+  max-width: 92%;
+  animation: msgFadeIn 0.3s ease;
+}
+@keyframes msgFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.chat-msg.bot { align-self: flex-start; }
+.chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+
+.chat-msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--grad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 12px;
+  color: white;
+  flex-shrink: 0;
+}
+.chat-msg.user .chat-msg-avatar {
+  background: var(--black);
+}
+
+.chat-msg-content {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px 16px 16px 4px;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.chat-msg.user .chat-msg-content {
+  background: var(--black);
+  color: white;
+  border: none;
+  border-radius: 16px 16px 4px 16px;
+}
+.chat-msg-content strong { color: var(--orange); }
+.chat-msg.user .chat-msg-content strong { color: #FF9B70; }
+
+.chat-msg-content .hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.chat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.chat-chip {
+  padding: 6px 12px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 100px;
+  transition: all 0.15s;
+}
+.chat-chip:hover { border-color: var(--orange); color: var(--text); }
+.chat-chip.selected { border-color: var(--orange); background: rgba(249,69,1,0.07); color: var(--orange); font-weight: 700; }
+
+.chat-typing {
+  display: flex;
+  gap: 4px;
+  padding: 8px 0;
+}
+.chat-typing span {
+  width: 8px;
+  height: 8px;
+  background: var(--muted);
+  border-radius: 50%;
+  animation: typingBounce 1.4s infinite;
+}
+.chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+.chatbot-input-area {
+  padding: 16px 20px;
+  background: white;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+}
+.chatbot-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.chatbot-input:focus {
+  border-color: var(--orange);
+}
+.chatbot-input::placeholder { color: rgba(122,116,112,0.5); }
+.chatbot-send {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--grad);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+.chatbot-send:hover { transform: scale(1.05); }
+.chatbot-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.chatbot-send svg {
+  width: 18px;
+  height: 18px;
+  color: white;
+}
+
+.chat-progress {
+  padding: 0 20px 12px;
+  background: white;
+}
+.chat-progress-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.chat-progress-fill {
+  height: 100%;
+  background: var(--grad);
+  transition: width 0.4s ease;
+}
+.chat-progress-text {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .chatbot-widget {
+    bottom: 16px;
+    right: 16px;
+  }
+  .chatbot-window {
+    width: calc(100vw - 32px);
+    height: calc(100vh - 120px);
+    max-height: 600px;
+  }
+  .chatbot-toggle {
+    width: 56px;
+    height: 56px;
+  }
+  .chatbot-teaser {
+    max-width: 220px;
+  }
+}
 
 /* ─── FOOTER ─── */
 footer {
@@ -1597,6 +1916,423 @@ function startLoading() {
     if(i < msgs.length) lbl.textContent = msgs[i++];
   }, 900);
 }
+</script>
+
+<!-- Chatbot Widget -->
+<div class="chatbot-widget" id="chatbot-widget">
+  <div class="chatbot-teaser" onclick="openChatbot()">
+    <div class="chatbot-teaser-text">Ready to get your first <strong>Lineup</strong>?</div>
+    <div class="chatbot-teaser-sub">Chat with me to get started</div>
+  </div>
+  
+  <div class="chatbot-window">
+    <div class="chatbot-header">
+      <div class="chatbot-avatar">BH</div>
+      <div class="chatbot-header-info">
+        <h4>Ben from The Lineup</h4>
+        <span>Usually replies instantly</span>
+      </div>
+      <div class="chatbot-header-status"></div>
+    </div>
+    
+    <div class="chatbot-messages" id="chat-messages">
+      <!-- Messages appear here -->
+    </div>
+    
+    <div class="chat-progress">
+      <div class="chat-progress-bar">
+        <div class="chat-progress-fill" id="chat-progress" style="width: 0%"></div>
+      </div>
+      <div class="chat-progress-text" id="chat-progress-text">Let's get started</div>
+    </div>
+    
+    <div class="chatbot-input-area">
+      <input type="text" class="chatbot-input" id="chat-input" placeholder="Type your answer..." onkeypress="if(event.key==='Enter')sendChatMessage()">
+      <button class="chatbot-send" onclick="sendChatMessage()" id="chat-send">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <button class="chatbot-toggle" onclick="toggleChatbot()" aria-label="Chat with us">
+    <svg class="chat-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+</div>
+
+<script>
+// ─── CHATBOT STATE ───
+const chatData = {
+  name: '',
+  email: '',
+  location: '',
+  interests: [],
+  topics: [],
+  goal: '',
+  blocker: '',
+  extra: ''
+};
+
+let chatStep = 0;
+let awaitingChips = false;
+let selectedChips = [];
+
+const chatFlow = [
+  {
+    key: 'intro',
+    bot: "Hey! I'm Ben. I built The Lineup to help people like you find opportunities you'd never find on your own. Speaking gigs, podcast spots, writing opportunities — all matched to *you*.",
+    followUp: "Let's build your first Lineup together. What's your first name?",
+    field: 'name',
+    validate: (v) => v.length >= 1,
+    nudge: "I'd love to know what to call you! Just your first name is perfect."
+  },
+  {
+    key: 'email',
+    bot: (d) => `Great to meet you, ${d.name}! Where should I send your Lineup each Monday?`,
+    field: 'email',
+    validate: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+    nudge: "That doesn't look like a valid email. Can you double-check?"
+  },
+  {
+    key: 'location',
+    bot: "Perfect. Where are you based? This helps me find local events and opportunities near you.",
+    hint: "City, State or just 'Remote' works",
+    field: 'location',
+    validate: () => true,
+    optional: true
+  },
+  {
+    key: 'interests',
+    bot: "Now for the fun part. What kinds of opportunities are you most interested in?",
+    hint: "Pick as many as you want — the more I know, the better your Lineup",
+    chips: ['Speaking', 'Podcasting', 'Writing', 'Content Creation', 'Events & Networking', 'Comedy', 'Startups', 'Journalism', 'Film & Video', 'Music', 'Design', 'Tech'],
+    field: 'interests',
+    multiSelect: true,
+    nudge: "Pick at least one so I know what to look for!"
+  },
+  {
+    key: 'topics',
+    bot: (d) => `Love it — ${d.interests.slice(0,2).join(' and ')}${d.interests.length > 2 ? ' and more' : ''}. Now, what topics do you want to be known for?`,
+    hint: "These help me match you with the right audiences",
+    chips: ['AI & Technology', 'Marketing', 'Culture & Society', 'Sustainability', 'Health & Wellness', 'Finance & Business', 'Education', 'Social Justice', 'Science', 'Food & Hospitality', 'Sports', 'History & Politics'],
+    field: 'topics',
+    multiSelect: true,
+    nudge: "Select at least one topic that you're passionate about!"
+  },
+  {
+    key: 'goal',
+    bot: (d) => `Nice choices. Here's the big one, ${d.name}: What's your main goal right now? What are you trying to make happen?`,
+    hint: "Be specific! 'Land my first TEDx' is better than 'speak more'",
+    field: 'goal',
+    validate: (v) => v.length >= 10,
+    nudge: "I need a bit more here — the more specific you are about your goal, the better I can match opportunities to you. What does success look like?",
+    pushForMore: (v) => v.length < 30 ? "That's a good start! Can you tell me more? What specifically would a win look like? The more detail, the better your Lineup." : null
+  },
+  {
+    key: 'blocker',
+    bot: "I hear you. What's been getting in the way? What's stopped you from making progress on this?",
+    hint: "No wrong answers — just helps me understand where to focus",
+    field: 'blocker',
+    validate: (v) => v.length >= 5,
+    nudge: "Even a short answer helps — what's the biggest thing holding you back?",
+    pushForMore: (v) => v.length < 25 ? "Got it. Anything else? The blockers help me avoid sending you stuff that won't work for your situation." : null
+  },
+  {
+    key: 'extra',
+    bot: (d) => `This is super helpful, ${d.name}. One last thing — anything else I should know? Your background, what you've tried, what you're sick of seeing, what makes you *you*?`,
+    hint: "Optional but makes your Lineup way more personal",
+    field: 'extra',
+    validate: () => true,
+    optional: true,
+    pushForMore: (v) => v.length > 0 && v.length < 20 ? "Love that you're sharing! Feel free to add more — this is what makes your Lineup feel like it was made just for you." : null
+  },
+  {
+    key: 'complete',
+    bot: (d) => `Perfect, ${d.name}! I've got everything I need. Your first Lineup drops Monday at 8am — 5 opportunities matched specifically to your goals in ${d.topics[0] || 'your space'}. Get ready.`,
+    final: true
+  }
+];
+
+function openChatbot() {
+  document.getElementById('chatbot-widget').classList.add('open');
+  document.getElementById('chatbot-widget').classList.add('teaser-hidden');
+  if (chatStep === 0) {
+    startChatFlow();
+  }
+}
+
+function toggleChatbot() {
+  const widget = document.getElementById('chatbot-widget');
+  if (widget.classList.contains('open')) {
+    widget.classList.remove('open');
+  } else {
+    openChatbot();
+  }
+}
+
+function startChatFlow() {
+  const step = chatFlow[0];
+  addBotMessage(step.bot);
+  setTimeout(() => {
+    addBotMessage(step.followUp, step.hint);
+  }, 1200);
+  chatStep = 0;
+  updateChatProgress();
+}
+
+function addBotMessage(text, hint = null, chips = null) {
+  const messages = document.getElementById('chat-messages');
+  
+  // Show typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'chat-msg bot';
+  typing.innerHTML = `
+    <div class="chat-msg-avatar">BH</div>
+    <div class="chat-msg-content">
+      <div class="chat-typing"><span></span><span></span><span></span></div>
+    </div>
+  `;
+  messages.appendChild(typing);
+  messages.scrollTop = messages.scrollHeight;
+  
+  setTimeout(() => {
+    // Replace typing with actual message
+    const msgText = typeof text === 'function' ? text(chatData) : text;
+    let content = msgText.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+    if (hint) {
+      content += `<span class="hint">${hint}</span>`;
+    }
+    if (chips) {
+      content += `<div class="chat-chips" id="active-chips">`;
+      chips.forEach(c => {
+        content += `<button class="chat-chip" onclick="toggleChatChip(this, '${c}')">${c}</button>`;
+      });
+      content += `</div>`;
+      awaitingChips = true;
+      selectedChips = [];
+      // Change send button to "Continue" mode
+      document.getElementById('chat-input').placeholder = 'Select options above, then click send';
+    }
+    
+    typing.querySelector('.chat-msg-content').innerHTML = content;
+    messages.scrollTop = messages.scrollHeight;
+  }, 800 + Math.random() * 400);
+}
+
+function addUserMessage(text) {
+  const messages = document.getElementById('chat-messages');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg user';
+  msg.innerHTML = `
+    <div class="chat-msg-avatar">${chatData.name ? chatData.name[0].toUpperCase() : 'Y'}</div>
+    <div class="chat-msg-content">${text}</div>
+  `;
+  messages.appendChild(msg);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function toggleChatChip(el, value) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) {
+    if (!selectedChips.includes(value)) selectedChips.push(value);
+  } else {
+    selectedChips = selectedChips.filter(c => c !== value);
+  }
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const step = chatFlow[chatStep];
+  
+  let value;
+  if (awaitingChips) {
+    if (selectedChips.length === 0) {
+      addBotMessage(step.nudge);
+      return;
+    }
+    value = selectedChips;
+    addUserMessage(selectedChips.join(', '));
+    awaitingChips = false;
+    // Remove chip interactivity
+    document.querySelectorAll('#active-chips .chat-chip').forEach(c => {
+      c.onclick = null;
+      c.style.cursor = 'default';
+    });
+  } else {
+    value = input.value.trim();
+    if (!value && !step.optional) {
+      addBotMessage(step.nudge);
+      return;
+    }
+    if (value && step.validate && !step.validate(value)) {
+      addBotMessage(step.nudge);
+      return;
+    }
+    if (value) addUserMessage(value);
+  }
+  
+  input.value = '';
+  input.placeholder = 'Type your answer...';
+  
+  // Store the value
+  if (step.field) {
+    chatData[step.field] = value;
+  }
+  
+  // Check if we should push for more detail
+  if (step.pushForMore && value) {
+    const pushMsg = step.pushForMore(Array.isArray(value) ? value.join(' ') : value);
+    if (pushMsg) {
+      setTimeout(() => addBotMessage(pushMsg), 600);
+      return; // Stay on same step for more input
+    }
+  }
+  
+  // Move to next step
+  chatStep++;
+  updateChatProgress();
+  
+  if (chatStep < chatFlow.length) {
+    const nextStep = chatFlow[chatStep];
+    setTimeout(() => {
+      addBotMessage(nextStep.bot, nextStep.hint, nextStep.chips);
+      
+      if (nextStep.final) {
+        // Show completion state
+        document.getElementById('chat-input').disabled = true;
+        document.getElementById('chat-send').disabled = true;
+        document.getElementById('chat-input').placeholder = 'All done! Check your inbox Monday';
+        
+        // After a delay, offer to show preview
+        setTimeout(() => {
+          addBotMessage("Want to see a preview of what your Lineup will look like? I can generate a sample right now.");
+          setTimeout(() => {
+            const messages = document.getElementById('chat-messages');
+            const previewBtn = document.createElement('div');
+            previewBtn.className = 'chat-msg bot';
+            previewBtn.innerHTML = `
+              <div class="chat-msg-avatar">BH</div>
+              <div class="chat-msg-content">
+                <button onclick="showPreviewFromChat()" style="background:var(--grad);color:white;border:none;padding:12px 24px;border-radius:100px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;">Show Me My Preview Lineup</button>
+              </div>
+            `;
+            messages.appendChild(previewBtn);
+            messages.scrollTop = messages.scrollHeight;
+          }, 800);
+        }, 2000);
+      }
+    }, 600);
+  }
+}
+
+function updateChatProgress() {
+  const progress = Math.min((chatStep / (chatFlow.length - 1)) * 100, 100);
+  document.getElementById('chat-progress').style.width = progress + '%';
+  
+  const texts = [
+    "Let's get started",
+    "Getting to know you...",
+    "Almost there...",
+    "Looking good!",
+    "Final touches...",
+    "Just one more...",
+    "Wrapping up...",
+    "All done!"
+  ];
+  document.getElementById('chat-progress-text').textContent = texts[Math.min(chatStep, texts.length - 1)];
+}
+
+function showPreviewFromChat() {
+  // Transfer chat data to the survey data format
+  u = { ...chatData };
+  document.getElementById('chatbot-widget').classList.remove('open');
+  showResult();
+  startLoading();
+  buildLineupFromChat();
+}
+
+async function buildLineupFromChat() {
+  const prompt = `You are The Lineup — a personalized weekly opportunity digest curated by Ben Hawes. Your tone is warm, direct, and specific. You sound like a well-connected friend who found these for someone, not a machine. DO NOT mention AI. Write as if a real person researched and curated this.
+
+Generate a personalized Lineup for this person. Return ONLY valid JSON — no backticks, no preamble.
+
+{
+  "intro": "2-sentence warm, personal intro. Start with their name. Reference their specific goal and something personal/specific about what you found. Sound human.",
+  "opportunities": [
+    {
+      "title": "Specific real-sounding opportunity name",
+      "type": "Speaking | Writing | Podcast | Grant | Event | Job | Fellowship",
+      "description": "2 sentences. Specific details: outlet/organization name, deadline if relevant, audience size if impressive.",
+      "fit": "1 sentence starting with ↳ explaining exactly why THIS person should go after THIS opportunity, referencing their specific goal.",
+      "cta": "Apply | Pitch | Submit | Attend | Connect"
+    }
+  ],
+  "recommendation": "2 warm, direct sentences. Which 1-2 to start with this week and a very specific reason why. Sound like a trusted friend giving advice."
+}
+
+User profile:
+- Name: ${chatData.name||'there'}
+- Location: ${chatData.location||'not specified'}
+- Interests: ${(chatData.interests||[]).join(', ')||'general'}
+- Topics: ${(chatData.topics||[]).join(', ')||'general'}  
+- Goal: ${chatData.goal||'build their personal brand and career'}
+- Blocker: ${chatData.blocker||'not sure where to start'}
+- Extra: ${chatData.extra||'none'}
+
+Generate 5 real, specific opportunities. Reference real organizations, real publications, real podcast shows, real conference types. Make it feel discovered, not invented. No AI language. No "curated by AI". Just human, warm, specific.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: "You are The Lineup — a human-feeling personalized opportunity service. Respond ONLY with valid JSON, no markdown, no backticks, no commentary.",
+        messages: [{ role:"user", content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.find(b=>b.type==='text')?.text || '';
+    const result = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderResult(result);
+  } catch(e) {
+    renderResult(fallback(chatData));
+  }
+}
+
+// Show teaser after delay
+setTimeout(() => {
+  const widget = document.getElementById('chatbot-widget');
+  if (!widget.classList.contains('open')) {
+    // Teaser is visible by default
+  }
+}, 2000);
+
+// Update visibility based on page
+function updateChatbotVisibility() {
+  const widget = document.getElementById('chatbot-widget');
+  const onHome = document.getElementById('page-home').style.display !== 'none';
+  widget.style.display = onHome ? 'flex' : 'none';
+}
+
+// Hook into existing navigation
+const origShowHome = showHome;
+showHome = function() {
+  origShowHome();
+  updateChatbotVisibility();
+};
+const origShowSurvey = showSurvey;
+showSurvey = function() {
+  origShowSurvey();
+  updateChatbotVisibility();
+};
 </script>
 </body>
 </html>
