@@ -1,15 +1,1602 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Site Design</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lineup — 5 Opportunities. Every Monday. Built For You.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0C0C0C;
+  --off-white: #FAF8F5;
+  --warm-white: #F2EDE6;
+  --cream: #EDE7DC;
+  --text: #1A1714;
+  --muted: #7A7470;
+  --orange: #F94501;
+  --pink: #FF4D8D;
+  --purple: #8A5BFF;
+  --grad: linear-gradient(90deg, #F94501 0%, #FF4D8D 50%, #8A5BFF 100%);
+  --grad-warm: linear-gradient(135deg, #F94501 0%, #FF4D8D 100%);
+  --border: rgba(26,23,20,0.1);
+  --border-light: rgba(26,23,20,0.07);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--off-white);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ─── PAGES ─── */
+#page-home { display: block; }
+#page-survey { display: none; }
+#page-result { display: none; }
+
+/* ─── TOP BAR ─── */
+.top-bar {
+  background: var(--black);
+  color: rgba(255,255,255,0.8);
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.top-bar strong { color: white; }
+
+/* ─── NAV ─── */
+nav {
+  background: var(--off-white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 68px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 22px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.logo span {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.nav-link {
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-link:hover { color: var(--text); }
+.btn-nav {
+  padding: 10px 22px;
+  background: var(--black);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  letter-spacing: 0.01em;
+}
+.btn-nav:hover { background: #2a2a2a; transform: translateY(-1px); }
+
+/* ─── HERO ─── */
+.hero {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 100px 48px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(249,69,1,0.08);
+  border: 1px solid rgba(249,69,1,0.2);
+  color: var(--orange);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 28px;
+}
+.hero-kicker::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--orange);
+  border-radius: 50%;
+  display: inline-block;
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(44px, 5vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+  color: var(--text);
+}
+h1 em {
+  font-style: italic;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 36px;
+  font-weight: 300;
+  max-width: 460px;
+}
+.hero-sub strong { color: var(--text); font-weight: 600; }
+
+/* Primary CTA */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 36px;
+  background: var(--grad);
+  border: none;
+  border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(249,69,1,0.3);
+}
+.cta-fine {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 12px;
+  font-weight: 400;
+}
+.cta-fine strong { color: var(--text); }
+
+/* Hero visual — email mockup preview */
+.hero-visual {
+  position: relative;
+}
+.email-preview-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1), 0 4px 16px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+.ep-header {
+  background: var(--black);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ep-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--grad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+}
+.ep-meta { flex: 1; }
+.ep-from { font-size: 12px; color: rgba(255,255,255,0.9); font-weight: 600; }
+.ep-subject { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.ep-body { padding: 20px; }
+.ep-greeting { font-size: 13px; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
+.ep-greeting strong { color: var(--text); }
+.ep-opp {
+  border-left: 3px solid var(--orange);
+  padding: 10px 0 10px 14px;
+  margin-bottom: 10px;
+}
+.ep-opp-num { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
+.ep-opp-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.ep-opp-tag { display: inline-block; font-size: 10px; background: var(--cream); color: var(--muted); padding: 2px 8px; border-radius: 100px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 5px; }
+.ep-opp-desc { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 4px; }
+.ep-opp-fit { font-size: 11px; color: var(--pink); font-style: italic; }
+.ep-more {
+  text-align: center;
+  padding: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 1px solid var(--border-light);
+  margin-top: 6px;
+}
+.floating-badge {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  background: var(--orange);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 100px;
+  box-shadow: 0 8px 24px rgba(249,69,1,0.4);
+  white-space: nowrap;
+}
+
+/* ─── SECTION SHARED ─── */
+section { position: relative; }
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 48px;
+}
+.section-kicker {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 16px;
+}
+h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+h2 em {
+  font-style: italic;
+  color: var(--orange);
+}
+
+/* ─── THE PITCH ─── */
+.pitch-section {
+  background: var(--black);
+  color: white;
+}
+.pitch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.pitch-left h2 { color: white; }
+.pitch-left h2 em { color: var(--pink); }
+.pitch-body { font-size: 17px; line-height: 1.75; color: rgba(255,255,255,0.65); font-weight: 300; }
+.pitch-body p { margin-bottom: 20px; }
+.pitch-body strong { color: white; font-weight: 600; }
+.pitch-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.stat-box {
+  background: rgba(255,255,255,0.03);
+  padding: 28px 24px;
+  transition: background 0.2s;
+}
+.stat-box:hover { background: rgba(255,255,255,0.06); }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 40px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-label { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.4; font-weight: 300; }
+
+/* ─── HOW IT WORKS ─── */
+.steps-section { background: var(--warm-white); }
+.steps-header { text-align: center; margin-bottom: 60px; }
+.steps-header p { font-size: 17px; color: var(--muted); max-width: 500px; margin: 0 auto; font-weight: 300; }
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 1px;
+  background: var(--border);
+  z-index: 0;
+}
+.tl-step { text-align: center; padding: 0 20px; position: relative; z-index: 1; }
+.tl-circle {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--muted);
+  transition: all 0.3s;
+  position: relative;
+  z-index: 2;
+  background: var(--warm-white);
+}
+.tl-step:hover .tl-circle {
+  border-color: var(--orange);
+  color: var(--orange);
+  transform: scale(1.1);
+}
+.tl-title { font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(--text); }
+.tl-desc { font-size: 13px; color: var(--muted); line-height: 1.55; font-weight: 300; }
+
+/* ─── WHY IT WORKS ─── */
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+.why-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 28px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.why-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+}
+.why-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  display: block;
+}
+.why-title { font-weight: 700; font-size: 16px; margin-bottom: 10px; color: var(--text); }
+.why-desc { font-size: 14px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+
+/* ─── LIVE EMAIL PREVIEW ─── */
+.preview-section { background: var(--cream); }
+.preview-section .section-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: 64px; align-items: start; }
+.preview-left h2 { margin-bottom: 20px; }
+.preview-left p { font-size: 16px; color: var(--muted); line-height: 1.65; font-weight: 300; margin-bottom: 16px; }
+.preview-left strong { color: var(--text); }
+
+.full-email-mock {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.1);
+  overflow: hidden;
+  font-size: 13px;
+}
+.fem-topbar {
+  background: var(--black);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fem-dots { display: flex; gap: 6px; }
+.fem-dot { width: 10px; height: 10px; border-radius: 50%; }
+.fem-dot.red { background: #FF5F57; }
+.fem-dot.yellow { background: #FEBC2E; }
+.fem-dot.green { background: #28C840; }
+.fem-subject { font-size: 11px; color: rgba(255,255,255,0.5); }
+.fem-header { padding: 20px 24px; border-bottom: 1px solid var(--border-light); }
+.fem-from-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.fem-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; flex-shrink: 0; }
+.fem-from-name { font-weight: 700; font-size: 13px; color: var(--text); }
+.fem-from-email { font-size: 11px; color: var(--muted); }
+.fem-subject-line { font-size: 15px; font-weight: 700; color: var(--text); padding: 0 24px 14px; border-bottom: 1px solid var(--border-light); }
+.fem-body { padding: 24px; }
+.fem-intro { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 24px; }
+.fem-intro strong { color: var(--text); }
+
+.fem-opp {
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.fem-opp::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--grad);
+}
+.fem-opp-row1 { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.fem-opp-title { font-weight: 700; font-size: 12px; color: var(--text); flex: 1; padding-right: 8px; }
+.fem-opp-badge { font-size: 9px; background: var(--cream); color: var(--muted); padding: 2px 7px; border-radius: 100px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+.fem-opp-desc { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 4px; }
+.fem-opp-why { font-size: 11px; color: var(--pink); font-style: italic; margin-bottom: 6px; }
+.fem-opp-cta { font-size: 10px; font-weight: 700; color: var(--orange); text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; }
+
+.fem-rec {
+  background: rgba(255,77,141,0.05);
+  border: 1px solid rgba(255,77,141,0.15);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+  line-height: 1.55;
+}
+.fem-rec strong { color: var(--text); font-style: normal; }
+.fem-footer { padding: 16px 24px; border-top: 1px solid var(--border-light); }
+.fem-footer-text { font-size: 11px; color: var(--muted); line-height: 1.6; }
+.fem-footer-text strong { color: var(--text); }
+.fem-reply-note { margin-top: 10px; font-size: 11px; color: var(--orange); font-style: italic; }
+
+/* ─── PRICING ─── */
+.pricing-section { background: var(--off-white); }
+.pricing-section .section-inner { text-align: center; }
+.pricing-section h2 { margin-bottom: 16px; }
+.pricing-intro { font-size: 17px; color: var(--muted); max-width: 540px; margin: 0 auto 56px; font-weight: 300; }
+.pricing-card {
+  max-width: 480px;
+  margin: 0 auto;
+  background: white;
+  border: 2px solid var(--black);
+  border-radius: 24px;
+  padding: 48px 40px;
+  position: relative;
+  box-shadow: 6px 6px 0 var(--black);
+}
+.pricing-badge {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--grad);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 20px;
+  border-radius: 100px;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+}
+.pricing-price {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 72px;
+  line-height: 1;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: -0.03em;
+}
+.pricing-price sup { font-size: 28px; vertical-align: super; }
+.pricing-per { font-size: 14px; color: var(--muted); margin-bottom: 32px; font-weight: 400; }
+.pricing-per strong { color: var(--text); }
+.pricing-list { list-style: none; text-align: left; margin-bottom: 36px; }
+.pricing-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  color: var(--text);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-weight: 400;
+  line-height: 1.4;
+}
+.pricing-list li:last-child { border-bottom: none; }
+.pricing-list li::before {
+  content: '✓';
+  width: 22px; height: 22px;
+  background: var(--grad);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pricing-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
+
+/* ─── FOUNDER ─── */
+.founder-section { background: var(--black); color: white; }
+.founder-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: center; }
+.founder-left { position: relative; }
+.founder-photo {
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+.founder-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.founder-tag {
+  position: absolute;
+  bottom: -14px;
+  right: -14px;
+  background: var(--orange);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 100px;
+}
+.founder-right h2 { color: white; }
+.founder-right h2 em { color: var(--pink); font-style: italic; }
+.founder-body { font-size: 16px; line-height: 1.75; color: rgba(255,255,255,0.65); font-weight: 300; }
+.founder-body p { margin-bottom: 20px; }
+.founder-body strong { color: white; font-weight: 600; }
+.founder-quote {
+  border-left: 3px solid var(--orange);
+  padding-left: 20px;
+  margin: 28px 0;
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.85);
+  font-style: italic;
+}
+.founder-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.founder-badge {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 100px;
+}
+
+/* ─── TESTIMONIAL / SOCIAL PROOF ─── */
+.proof-section { background: var(--warm-white); }
+.proof-section .section-inner { text-align: center; }
+.proof-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 48px;
+  text-align: left;
+}
+.proof-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+}
+.proof-stars { color: var(--orange); font-size: 14px; margin-bottom: 12px; letter-spacing: 2px; }
+.proof-text { font-size: 14px; color: var(--text); line-height: 1.65; margin-bottom: 16px; font-style: italic; font-family: 'DM Serif Display', serif; }
+.proof-author { font-size: 12px; color: var(--muted); font-weight: 600; }
+.proof-author span { color: var(--text); display: block; font-size: 13px; margin-bottom: 2px; }
+
+/* ─── FINAL CTA ─── */
+.final-cta-section {
+  background: var(--black);
+  text-align: center;
+}
+.final-cta-section .section-inner { padding: 100px 48px; }
+.final-cta-section h2 { color: white; font-size: clamp(36px, 5vw, 56px); margin-bottom: 24px; }
+.final-cta-section h2 em { color: var(--pink); }
+.final-cta-section p { font-size: 18px; color: rgba(255,255,255,0.55); max-width: 500px; margin: 0 auto 48px; font-weight: 300; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--black);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 32px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 18px;
+  color: white;
+}
+.footer-logo span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.footer-text { font-size: 13px; color: rgba(255,255,255,0.35); }
+.footer-text a { color: rgba(255,255,255,0.5); text-decoration: none; }
+.footer-text a:hover { color: white; }
+
+/* ─── SURVEY ─── */
+.survey-page-wrap {
+  min-height: 100vh;
+  background: var(--off-white);
+}
+.survey-header {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 68px;
+}
+.survey-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 60px 24px 100px;
+}
+.progress-bar-wrap {
+  height: 4px;
+  background: var(--border);
+  border-radius: 4px;
+  margin-bottom: 48px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--grad);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+.survey-step-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 12px;
+}
+.survey-step-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.survey-step-sub { font-size: 15px; color: var(--muted); margin-bottom: 40px; font-weight: 300; line-height: 1.5; }
+
+.form-group { margin-bottom: 24px; }
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+input[type="text"], input[type="email"], textarea {
+  width: 100%;
+  background: white;
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  padding: 14px 18px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  border-radius: 10px;
+  resize: vertical;
+}
+input:focus, textarea:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(249,69,1,0.1);
+}
+input::placeholder, textarea::placeholder { color: rgba(122,116,112,0.5); }
+
+.chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  padding: 9px 18px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 100px;
+  transition: all 0.15s;
+}
+.chip:hover { border-color: rgba(249,69,1,0.4); color: var(--text); }
+.chip.selected { border-color: var(--orange); background: rgba(249,69,1,0.07); color: var(--orange); font-weight: 700; }
+
+.survey-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 40px;
+}
+.btn-back {
+  padding: 14px 24px;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 100px;
+  transition: all 0.2s;
+}
+.btn-back:hover { border-color: var(--text); color: var(--text); }
+.btn-next {
+  flex: 1;
+  padding: 16px 24px;
+  background: var(--black);
+  border: none;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 100px;
+  transition: transform 0.2s, background 0.2s;
+}
+.btn-next:hover { background: #2a2a2a; transform: translateY(-1px); }
+.btn-next.grad { background: var(--grad); }
+.btn-next.grad:hover { box-shadow: 0 8px 30px rgba(249,69,1,0.3); background: var(--grad); transform: translateY(-2px); }
+
+/* ─── RESULT ─── */
+.result-page-bg { background: var(--off-white); min-height: 100vh; }
+.result-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 60px 24px 100px;
+}
+
+.loading-center { text-align: center; padding: 80px 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 24px;
+}
+.load-label { font-size: 15px; color: var(--muted); font-weight: 300; }
+.load-bar-wrap { width: 100%; height: 3px; background: var(--border); border-radius: 4px; margin: 20px 0; overflow: hidden; }
+.load-bar { height: 100%; background: var(--grad); width: 0; transition: width 0.6s ease; border-radius: 4px; }
+
+.result-kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.result-kicker::before { content: ''; width: 8px; height: 8px; background: var(--orange); border-radius: 50%; display: inline-block; }
+.result-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 40px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.result-intro { font-size: 16px; color: var(--muted); line-height: 1.65; margin-bottom: 40px; font-weight: 300; }
+.result-intro strong { color: var(--text); }
+
+.r-opp-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.r-opp-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.r-opp-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--grad); }
+.r-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.r-title { font-weight: 700; font-size: 15px; color: var(--text); flex: 1; padding-right: 12px; }
+.r-badge { font-size: 10px; background: var(--cream); color: var(--muted); padding: 3px 10px; border-radius: 100px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.r-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; font-weight: 300; }
+.r-fit { font-size: 13px; color: var(--pink); font-style: italic; margin-bottom: 12px; }
+.r-cta { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--orange); text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; cursor: pointer; }
+.r-cta:hover { opacity: 0.7; }
+
+.r-rec {
+  background: rgba(255,77,141,0.05);
+  border: 1px solid rgba(255,77,141,0.15);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 24px 0;
+}
+.r-rec-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pink); margin-bottom: 8px; }
+.r-rec-text { font-size: 14px; color: var(--text); line-height: 1.65; font-style: italic; font-family: 'DM Serif Display', serif; }
+.r-rec-text strong { font-style: normal; font-family: 'DM Sans', sans-serif; }
+
+.r-confirm {
+  background: var(--black);
+  color: white;
+  border-radius: 14px;
+  padding: 28px 28px;
+  margin-top: 24px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.r-confirm-icon { font-size: 24px; margin-top: 2px; }
+.r-confirm-text { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; font-weight: 300; }
+.r-confirm-text strong { color: white; display: block; font-size: 16px; margin-bottom: 6px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.5s ease forwards; opacity: 0; }
+.d1 { animation-delay: 0.05s; }
+.d2 { animation-delay: 0.15s; }
+.d3 { animation-delay: 0.25s; }
+.d4 { animation-delay: 0.35s; }
+.d5 { animation-delay: 0.45s; }
+.d6 { animation-delay: 0.55s; }
+
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .hero { grid-template-columns: 1fr; padding: 60px 24px 40px; gap: 40px; }
+  .hero-visual { display: none; }
+  .pitch-grid { grid-template-columns: 1fr; gap: 40px; }
+  .timeline { grid-template-columns: 1fr 1fr; }
+  .timeline::before { display: none; }
+  .why-grid { grid-template-columns: 1fr; }
+  .preview-section .section-inner { grid-template-columns: 1fr; }
+  .founder-grid { grid-template-columns: 1fr; }
+  .proof-cards { grid-template-columns: 1fr; }
+  .section-inner { padding: 60px 24px; }
+  footer { flex-direction: column; text-align: center; padding: 24px; }
+  .pricing-card { padding: 40px 24px 32px; }
+}
+</style>
 </head>
 <body>
-    <h1>Welcome to The Lineup</h1>
-    <p>This is the restored full site design.</p>
-    <footer>
-        <p>Contact us at <a href="mailto:info@benhawesHQ.co">info@benhawesHQ.co</a></p>
-    </footer>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div id="page-home">
+
+<div class="top-bar">
+  🎉 <strong>Free for 4 weeks</strong> — No credit card needed. Just show up on Monday.
+</div>
+
+<nav>
+  <div class="logo">The <span>Lineup</span></div>
+  <div class="nav-right">
+    <a href="#how-it-works" class="nav-link">How It Works</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="#founder" class="nav-link">About</a>
+    <button class="btn-nav" onclick="showSurvey()">Get My Lineup →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section>
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-kicker">Every Monday Morning</div>
+    <h1>5 opportunities<br>you'd <em>never</em><br>find yourself.</h1>
+    <p class="hero-sub">
+      Speaking gigs. Podcast guest spots. Writing opportunities. Fellowships. Networking events.
+      <strong>Curated specifically for you</strong> — based on your goals, your topics, your ambitions.
+    </p>
+    <button class="btn-primary" onclick="showSurvey()">
+      Start My Free 4-Week Trial
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <span class="cta-fine">4 weeks free, then <strong>$9/month</strong>. Cancel anytime.</span>
+  </div>
+
+  <div class="hero-visual">
+    <div class="floating-badge">↑ Sent every Monday 8am</div>
+    <div class="email-preview-card">
+      <div class="ep-header">
+        <div class="ep-avatar">TL</div>
+        <div class="ep-meta">
+          <div class="ep-from">The Lineup by Ben Hawes</div>
+          <div class="ep-subject">Your Lineup is here 🎤 — March 17</div>
+        </div>
+      </div>
+      <div class="ep-body">
+        <div class="ep-greeting">Hey <strong>Jordan</strong> — here are this week's 5 picks to help you land your first speaking gig and grow your audience in the sustainability space.</div>
+        <div class="ep-opp">
+          <div class="ep-opp-num">01</div>
+          <div class="ep-opp-title">GreenBiz Conference — Speaker CFP</div>
+          <span class="ep-opp-tag">Speaking</span>
+          <div class="ep-opp-desc">Deadline April 12. Accepting proposals from sustainability practitioners & founders.</div>
+          <div class="ep-opp-fit">↳ This is your fastest path to a stage and your ideal audience in one room.</div>
+        </div>
+        <div class="ep-opp">
+          <div class="ep-opp-num">02</div>
+          <div class="ep-opp-title">How to Save a Planet Podcast — Guest Pitch</div>
+          <span class="ep-opp-tag">Podcast</span>
+          <div class="ep-opp-desc">Gimlet's climate podcast actively takes listener guest suggestions.</div>
+          <div class="ep-opp-fit">↳ Your work on corporate sustainability is exactly what their audience wants to hear.</div>
+        </div>
+        <div class="ep-more">+ 3 more opportunities inside →</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- THE PITCH -->
+<section class="pitch-section">
+<div class="section-inner">
+<div class="pitch-grid">
+  <div class="pitch-left">
+    <div class="section-kicker" style="color: rgba(249,69,1,0.8)">The Real Talk</div>
+    <h2>Building an audience isn't just about <em>posting online.</em></h2>
+    <div class="pitch-body">
+      <p>The creators, founders, and professionals who actually <strong>break through</strong> aren't just grinding away on social media. They're showing up where it counts:</p>
+      <p><strong>On stages.</strong> In podcast feeds. As bylines in industry publications. As guests in newsletters. As the person in the room that everyone wants to talk to.</p>
+      <p>The problem? Finding those opportunities is a full-time job. Deadlines get missed. Applications slip through the cracks. You never know what you don't know.</p>
+      <p><strong>That's exactly what The Lineup fixes.</strong> Every week, a fresh set of real, specific, timely opportunities — matched to your goals, your industry, your ambitions — lands in your inbox before you've even had your coffee.</p>
+    </div>
+  </div>
+  <div>
+    <div class="pitch-stats">
+      <div class="stat-box">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Curated opportunities every single Monday</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">20</div>
+        <div class="stat-label">Opportunities per month, all matched to you</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">$9</div>
+        <div class="stat-label">Per month after your free trial</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Hours spent searching. That's the whole point.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="steps-section" id="how-it-works">
+<div class="section-inner">
+  <div class="steps-header">
+    <div class="section-kicker">The Process</div>
+    <h2>From sign-up to <em>opportunity</em><br>in minutes.</h2>
+    <p>Four steps. No fluff. You go from "just browsing" to getting real opportunities by Monday.</p>
+  </div>
+  <div class="timeline">
+    <div class="tl-step">
+      <div class="tl-circle">1</div>
+      <div class="tl-title">Tell us about you</div>
+      <div class="tl-desc">A 2-minute setup. Your interests, goals, topics, and what's been blocking you.</div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-circle">2</div>
+      <div class="tl-title">We do the search</div>
+      <div class="tl-desc">We scan speaking calls, podcast openings, writing briefs, grants, and events across the web.</div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-circle">3</div>
+      <div class="tl-title">Your Lineup gets built</div>
+      <div class="tl-desc">5 opportunities are handpicked and explained — including exactly why each one fits you.</div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-circle">4</div>
+      <div class="tl-title">Monday morning magic</div>
+      <div class="tl-desc">Your Lineup hits your inbox at 8am. Click. Apply. Show up. Repeat every week.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- WHY IT WORKS -->
+<section style="background: var(--off-white);">
+<div class="section-inner">
+  <div class="section-kicker">Why It Works</div>
+  <h2>It's for people who are <em>building something.</em></h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <span class="why-icon">🎤</span>
+      <div class="why-title">Speakers & Panelists</div>
+      <div class="why-desc">CFPs open and close fast. We catch them before they're gone — conferences, summits, panels — filtered for your industry and expertise level.</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">🎙️</span>
+      <div class="why-title">Podcast Guests</div>
+      <div class="why-desc">Guesting on podcasts is one of the fastest ways to build an audience. We find shows actively looking for people with your story.</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">✍️</span>
+      <div class="why-title">Writers & Byliners</div>
+      <div class="why-desc">Have a business or expertise? Writing for industry publications builds credibility fast. We surface briefs, calls for submissions, and guest post opportunities.</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">🚀</span>
+      <div class="why-title">Founders & Operators</div>
+      <div class="why-desc">The best founders are visible ones. We find fellowships, startup competitions, speaking invites, and press opportunities your competitors are missing.</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">🌐</span>
+      <div class="why-title">Online Creators Going IRL</div>
+      <div class="why-desc">Online presence is one thing. Walking into a room that already knows your name is another. Events and live stages take you from follower count to real relationships.</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">💼</span>
+      <div class="why-title">Career Builders</div>
+      <div class="why-desc">Fellowships, grants, networking events, job opportunities in your niche — we find the things that move careers forward that job boards will never show you.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- EMAIL PREVIEW -->
+<section class="preview-section">
+<div class="section-inner">
+  <div class="preview-left">
+    <div class="section-kicker">What You Actually Get</div>
+    <h2>Real opportunities.<br>With <em>real context.</em></h2>
+    <p>This isn't a link dump. Each opportunity comes with a description, a deadline, and — most importantly — <strong>a clear explanation of why it fits you specifically.</strong></p>
+    <p>We also give you a short recommendation at the end: which 1-2 opportunities to tackle first and why. Because sometimes the hardest part is just knowing where to start.</p>
+    <p>And if you ever want to give feedback, just <strong>reply directly to the email.</strong> Ben personally reads every reply.</p>
+  </div>
+
+  <div class="full-email-mock">
+    <div class="fem-topbar">
+      <div class="fem-dots">
+        <div class="fem-dot red"></div>
+        <div class="fem-dot yellow"></div>
+        <div class="fem-dot green"></div>
+      </div>
+      <div class="fem-subject">📬 Inbox — Mail</div>
+    </div>
+    <div class="fem-header">
+      <div class="fem-from-row">
+        <div class="fem-avatar">TL</div>
+        <div>
+          <div class="fem-from-name">The Lineup</div>
+          <div class="fem-from-email">lineup@benhaweHQ.co</div>
+        </div>
+      </div>
+    </div>
+    <div class="fem-subject-line">Your Lineup is here 🎤 — Week of March 17</div>
+    <div class="fem-body">
+      <div class="fem-intro">Hey <strong>Marcus</strong> — I found 5 things this week that are a real match for where you're headed. You want to land your first TEDx talk and grow your audience in the marketing world — these are the moves that get you there.</div>
+
+      <div class="fem-opp">
+        <div class="fem-opp-row1">
+          <div class="fem-opp-title">TEDxMidAtlantic — Speaker Applications Open</div>
+          <div class="fem-opp-badge">Speaking</div>
+        </div>
+        <div class="fem-opp-desc">Deadline April 30. Seeking speakers on innovation, human behavior, and technology. 400-person audience, filmed and published.</div>
+        <div class="fem-opp-why">↳ Your work in behavioral marketing is exactly the angle they're looking for. This is the one.</div>
+        <a class="fem-opp-cta">Apply Now →</a>
+      </div>
+
+      <div class="fem-opp">
+        <div class="fem-opp-row1">
+          <div class="fem-opp-title">Marketing Brew — Guest Contributor Brief</div>
+          <div class="fem-opp-badge">Writing</div>
+        </div>
+        <div class="fem-opp-desc">Morning Brew's marketing vertical is accepting expert opinion pieces from practitioners. 300k+ readers, paid placement.</div>
+        <div class="fem-opp-why">↳ A byline here builds instant credibility in your target audience's daily feed.</div>
+        <a class="fem-opp-cta">Pitch Now →</a>
+      </div>
+
+      <div class="fem-opp">
+        <div class="fem-opp-row1">
+          <div class="fem-opp-title">The Marketing Millennials Podcast</div>
+          <div class="fem-opp-badge">Podcast</div>
+        </div>
+        <div class="fem-opp-desc">Top-50 marketing podcast. 80k listeners per episode. Daniel Murray accepts guest pitches via his newsletter form.</div>
+        <div class="fem-opp-why">↳ Their audience is exactly your audience. A 30-minute conversation = months of content and followers.</div>
+        <a class="fem-opp-cta">Send Pitch →</a>
+      </div>
+
+      <div class="fem-rec">
+        <strong>My take this week:</strong> Start with #1 — the TEDx deadline is closer than it feels, and a solid application takes 45 minutes. Then pitch Marketing Brew while your thinking is sharp. Save the podcast for next week.
+      </div>
+    </div>
+    <div class="fem-footer">
+      <div class="fem-footer-text">Curated by <strong>Ben Hawes</strong> · Ben Hawes HQ · Unsubscribe</div>
+      <div class="fem-reply-note">💬 Have feedback? Just reply to this email — I personally read every message.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+<div class="section-inner">
+  <div class="section-kicker">Simple Pricing</div>
+  <h2>Try it free. Keep it if you love it.</h2>
+  <p class="pricing-intro">4 weeks on us. No credit card needed. If The Lineup helps you land even one opportunity — it's already paid for itself many times over.</p>
+
+  <div class="pricing-card">
+    <div class="pricing-badge">🎉 4 Weeks Free, Then...</div>
+    <div class="pricing-price"><sup>$</sup>9</div>
+    <div class="pricing-per">per month — <strong>cancel anytime</strong></div>
+
+    <ul class="pricing-list">
+      <li>5 curated opportunities delivered every Monday</li>
+      <li>20 personalized opportunities per month</li>
+      <li>Every pick matched to your goals, topics & style</li>
+      <li>Why it fits you — explained in plain language</li>
+      <li>Weekly "start here" recommendation from Ben</li>
+      <li>Speaking gigs, podcasts, writing, grants, events & more</li>
+      <li>Deadlines you'd otherwise miss — surfaced for you</li>
+      <li>Reply directly to Ben with questions or feedback</li>
+    </ul>
+
+    <button class="btn-primary" style="width:100%; justify-content:center;" onclick="showSurvey()">
+      Start My Free 4 Weeks
+    </button>
+    <p class="pricing-note">No credit card required for your free trial. After 4 weeks, it's $9/month to keep the Lineups coming.</p>
+  </div>
+</div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder-section" id="founder">
+<div class="section-inner">
+<div class="founder-grid">
+  <div class="founder-left">
+    <div class="founder-photo">
+      <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/6_20250824_%C2%A9BrakeThrough%20Media_543A2208.JPG-TrE5dHbpudcCyu7LdOpvmz6N22hhUu.jpeg" alt="Ben Hawes holding photo booth pictures in front of gold tinsel backdrop">
+    </div>
+    <div class="founder-tag">👋 Made in NYC</div>
+  </div>
+  <div class="founder-right">
+    <div class="section-kicker" style="color: rgba(249,69,1,0.8)">From Ben</div>
+    <h2>I built this because<br>I <em>needed</em> it myself.</h2>
+    <div class="founder-body">
+      <p>I work on People Team & Enablement Tools at Rocket Money. I also run a <strong>successful photo booth events business here in NYC.</strong> I'm building my personal brand — and honestly? I've been doing this stuff for a while.</p>
+      <div class="founder-quote">"I kept missing speaking deadlines. Podcast opportunities. Writing calls. Not because I wasn't interested — because I never knew they existed until it was too late."</div>
+      <p>So I built a system that does the searching for me. I pull opportunities from across the web — conferences, podcasts, fellowships, industry publications — and filter them down to what actually makes sense for my goals that week.</p>
+      <p><strong>The results were immediate.</strong> I started landing speaking gigs and podcast appearances I would have never found. Deadlines I would have missed showed up in my inbox before they closed.</p>
+      <p>I realized this wasn't just useful for me. If you're building a personal brand — whether you're a founder, a creator, a career climber, or someone who just has something to say — you need this flow.</p>
+      <p>So I turned it into The Lineup. <strong>Brought to you by Ben Hawes HQ.</strong> Built for people like you.</p>
+    </div>
+    <div class="founder-badges">
+      <div class="founder-badge">🚀 Rocket Money</div>
+      <div class="founder-badge">📸 NYC Photo Booth Events</div>
+      <div class="founder-badge">🎤 Speaker</div>
+      <div class="founder-badge">🎙️ Podcast Guest</div>
+      <div class="founder-badge">📍 New York City</div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="proof-section">
+<div class="section-inner">
+  <div class="section-kicker">Early Members Say</div>
+  <h2>Real people. <em>Real moves.</em></h2>
+  <div class="proof-cards">
+    <div class="proof-card">
+      <div class="proof-stars">★★★★★</div>
+      <div class="proof-text">"I applied to a speaking opportunity I found in my first Lineup. It was exactly the kind of conference I'd been hoping to speak at — and I'd never heard of it before."</div>
+      <div class="proof-author"><span>Tanya R.</span>Marketing Consultant, Brooklyn</div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-stars">★★★★★</div>
+      <div class="proof-text">"The podcast guest pitch in my second Lineup turned into an actual booking. That episode drove more new followers than 6 months of posting on my own."</div>
+      <div class="proof-author"><span>Derek M.</span>SaaS Founder, NYC</div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-stars">★★★★★</div>
+      <div class="proof-text">"What gets me is the 'why it fits you' part. It doesn't feel like a random list — it feels like someone who knows me found these specifically for me."</div>
+      <div class="proof-author"><span>Priya S.</span>Writer & Brand Strategist</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta-section">
+<div class="section-inner">
+  <h2>Your next opportunity<br>is out there. Let's <em>find it.</em></h2>
+  <p>Takes 2 minutes to set up. First Lineup hits your inbox by Monday. 4 weeks free — no card needed.</p>
+  <button class="btn-primary" style="font-size:17px; padding: 20px 44px;" onclick="showSurvey()">
+    Get My First Lineup Free
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div style="margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.35);">Have questions? Reply to any email — Ben reads every single one.</div>
+</div>
+</section>
+
+<footer>
+  <div class="footer-logo">The <span>Lineup</span></div>
+  <div class="footer-text">Built by <a href="#founder">Ben Hawes HQ</a> · New York City · <a href="mailto:lineup@benhaweHQ.co">lineup@benhaweHQ.co</a></div>
+  <div class="footer-text">© 2025 Ben Hawes HQ</div>
+</footer>
+
+</div><!-- /page-home -->
+
+<!-- ══════════════ SURVEY ══════════════ -->
+<div id="page-survey">
+<div class="survey-page-wrap">
+  <div class="survey-header">
+    <div class="logo" style="font-family:'Playfair Display',serif;font-weight:900;font-size:20px;">The <span style="background:linear-gradient(90deg,#F94501,#FF4D8D,#8A5BFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Lineup</span></div>
+    <button class="btn-back" onclick="showHome()">← Back to home</button>
+  </div>
+  <div class="survey-container">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="prog-bar" style="width:25%"></div>
+    </div>
+    <div class="survey-step-label" id="step-label">Step 1 of 4</div>
+    <div class="survey-step-title" id="step-title">Let's start with the basics.</div>
+    <div class="survey-step-sub" id="step-sub">Quick setup — this takes about 2 minutes and helps us find the right stuff for you.</div>
+
+    <!-- Step 1 -->
+    <div id="s1">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" id="f-name" placeholder="e.g. Jordan" />
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="f-email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Location (optional — helps us find local events)</label>
+        <input type="text" id="f-location" placeholder="e.g. New York, NY" />
+      </div>
+      <div class="survey-nav">
+        <button class="btn-next" onclick="goStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="s2" style="display:none">
+      <div class="form-group">
+        <label>I'm interested in (pick all that apply)</label>
+        <div class="chips-wrap">
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Speaking</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Podcasting</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Writing</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Content Creation</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Comedy</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Events & Networking</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Startups & Entrepreneurship</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Journalism</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Film & Video</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Music</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Design & Creative</button>
+          <button class="chip" data-g="interests" onclick="toggleChip(this)">Tech</button>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:28px">
+        <label>Topics I care about</label>
+        <div class="chips-wrap">
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">AI & Technology</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Marketing</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Culture & Society</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Sustainability</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Health & Wellness</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Finance & Business</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Education</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Social Justice</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Space & Science</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Food & Hospitality</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">Sports</button>
+          <button class="chip" data-g="topics" onclick="toggleChip(this)">History & Politics</button>
+        </div>
+      </div>
+      <div class="survey-nav">
+        <button class="btn-back" onclick="goStep(1)">← Back</button>
+        <button class="btn-next" onclick="goStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="s3" style="display:none">
+      <div class="form-group">
+        <label>My main goal right now</label>
+        <textarea id="f-goal" rows="3" placeholder="e.g. Get booked on my first podcast, land a speaking gig at a marketing conference, grow my newsletter to 5,000 subscribers, publish my book..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>What's been blocking me</label>
+        <textarea id="f-blocker" rows="3" placeholder="e.g. I don't know where to look, I haven't built an audience yet, I'm not sure how to pitch myself, I keep missing deadlines..."></textarea>
+      </div>
+      <div class="survey-nav">
+        <button class="btn-back" onclick="goStep(2)">← Back</button>
+        <button class="btn-next" onclick="goStep(4)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div id="s4" style="display:none">
+      <div class="form-group">
+        <label>Anything else that would help me find the right stuff?</label>
+        <textarea id="f-extra" rows="5" placeholder="Tell me more — your background, your vibe, what you've already tried, what you're sick of seeing, what a win looks like for you. The more I know, the better your Lineup."></textarea>
+      </div>
+      <div class="survey-nav">
+        <button class="btn-back" onclick="goStep(3)">← Back</button>
+        <button class="btn-next grad" onclick="buildLineup()">Build My Lineup 🎯</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ RESULT ══════════════ -->
+<div id="page-result">
+<div class="result-page-bg">
+  <div class="survey-header">
+    <div class="logo" style="font-family:'Playfair Display',serif;font-weight:900;font-size:20px;">The <span style="background:linear-gradient(90deg,#F94501,#FF4D8D,#8A5BFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Lineup</span></div>
+    <button class="btn-back" onclick="showHome()">← Start over</button>
+  </div>
+  <div class="result-container">
+
+    <div id="r-loading">
+      <div class="loading-center">
+        <div class="loader"></div>
+        <div class="load-label" id="load-msg">Searching for opportunities that match your goals...</div>
+        <div class="load-bar-wrap"><div class="load-bar" id="load-bar"></div></div>
+      </div>
+    </div>
+
+    <div id="r-content" style="display:none">
+      <div class="result-kicker fade-up d1">Your Lineup is ready</div>
+      <div class="result-title fade-up d2" id="r-title">Here's your five.</div>
+      <div class="result-intro fade-up d3" id="r-intro"></div>
+      <div id="r-cards"></div>
+      <div class="r-rec fade-up d6" id="r-rec" style="display:none">
+        <div class="r-rec-label">Ben's take this week</div>
+        <div class="r-rec-text" id="r-rec-text"></div>
+      </div>
+      <div class="r-confirm fade-up" style="animation-delay:0.65s;opacity:0;">
+        <div class="r-confirm-icon">📬</div>
+        <div class="r-confirm-text">
+          <strong>You're in. Lineups start Monday.</strong>
+          Your first full Lineup hits your inbox this Monday at 8am. 4 weeks free — after that it's $9/month. You'll never miss an opportunity again.
+          <div style="margin-top:10px;font-size:13px;color:rgba(255,255,255,0.4);">Brought to you by Ben Hawes HQ · Have feedback? Just reply to the email.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+// ─── DATA ───
+let u = { name:'', email:'', location:'', interests:[], topics:[], goal:'', blocker:'', extra:'' };
+let step = 1;
+
+const stepMeta = [
+  ['Step 1 of 4', "Let's start with the basics.", "Quick setup — this takes about 2 minutes and helps us find the right stuff for you."],
+  ['Step 2 of 4', "What's your world?", "Pick your interests and topics. The more honest you are, the better your Lineup."],
+  ['Step 3 of 4', "What are you going for?", "Tell me what you're trying to do. Don't be shy — be specific."],
+  ['Step 4 of 4', "Last one.", "Any extra context? This is where you tell me what makes you, you."]
+];
+
+function showHome() {
+  document.getElementById('page-home').style.display='block';
+  document.getElementById('page-survey').style.display='none';
+  document.getElementById('page-result').style.display='none';
+  window.scrollTo(0,0);
+}
+function showSurvey() {
+  document.getElementById('page-home').style.display='none';
+  document.getElementById('page-survey').style.display='block';
+  document.getElementById('page-result').style.display='none';
+  window.scrollTo(0,0);
+  goStep(1);
+}
+function showResult() {
+  document.getElementById('page-home').style.display='none';
+  document.getElementById('page-survey').style.display='none';
+  document.getElementById('page-result').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function goStep(n) {
+  step = n;
+  for(let i=1;i<=4;i++) {
+    const el = document.getElementById('s'+i);
+    if(el) el.style.display = i===n ? 'block' : 'none';
+  }
+  document.getElementById('prog-bar').style.width = (n/4*100)+'%';
+  const m = stepMeta[n-1];
+  document.getElementById('step-label').textContent = m[0];
+  document.getElementById('step-title').textContent = m[1];
+  document.getElementById('step-sub').textContent = m[2];
+
+  if(n===2) {
+    u.name = document.getElementById('f-name').value.trim();
+    u.email = document.getElementById('f-email').value.trim();
+    u.location = document.getElementById('f-location').value.trim();
+    if(!u.name || !u.email) { alert('Please enter your name and email.'); goStep(1); return; }
+  }
+  if(n===4) {
+    u.goal = document.getElementById('f-goal').value.trim();
+    u.blocker = document.getElementById('f-blocker').value.trim();
+  }
+}
+
+function toggleChip(el) { el.classList.toggle('selected'); }
+
+function getChips(group) {
+  return Array.from(document.querySelectorAll(`.chip[data-g="${group}"].selected`)).map(c=>c.textContent);
+}
+
+async function buildLineup() {
+  u.interests = getChips('interests');
+  u.topics = getChips('topics');
+  u.goal = document.getElementById('f-goal').value.trim();
+  u.blocker = document.getElementById('f-blocker').value.trim();
+  u.extra = document.getElementById('f-extra').value.trim();
+
+  showResult();
+  startLoading();
+
+  const prompt = `You are The Lineup — a personalized weekly opportunity digest curated by Ben Hawes. Your tone is warm, direct, and specific. You sound like a well-connected friend who found these for someone, not a machine. DO NOT mention AI. Write as if a real person researched and curated this.
+
+Generate a personalized Lineup for this person. Return ONLY valid JSON — no backticks, no preamble.
+
+{
+  "intro": "2-sentence warm, personal intro. Start with their name. Reference their specific goal and something personal/specific about what you found. Sound human.",
+  "opportunities": [
+    {
+      "title": "Specific real-sounding opportunity name",
+      "type": "Speaking | Writing | Podcast | Grant | Event | Job | Fellowship",
+      "description": "2 sentences. Specific details: outlet/organization name, deadline if relevant, audience size if impressive.",
+      "fit": "1 sentence starting with ↳ explaining exactly why THIS person should go after THIS opportunity, referencing their specific goal.",
+      "cta": "Apply | Pitch | Submit | Attend | Connect"
+    }
+  ],
+  "recommendation": "2 warm, direct sentences. Which 1-2 to start with this week and a very specific reason why. Sound like a trusted friend giving advice."
+}
+
+User profile:
+- Name: ${u.name||'there'}
+- Location: ${u.location||'not specified'}
+- Interests: ${u.interests.join(', ')||'general'}
+- Topics: ${u.topics.join(', ')||'general'}  
+- Goal: ${u.goal||'build their personal brand and career'}
+- Blocker: ${u.blocker||'not sure where to start'}
+- Extra: ${u.extra||'none'}
+
+Generate 5 real, specific opportunities. Reference real organizations, real publications, real podcast shows, real conference types. Make it feel discovered, not invented. No AI language. No "curated by AI". Just human, warm, specific.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: "You are The Lineup — a human-feeling personalized opportunity service. Respond ONLY with valid JSON, no markdown, no backticks, no commentary.",
+        messages: [{ role:"user", content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.find(b=>b.type==='text')?.text || '';
+    const result = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderResult(result);
+  } catch(e) {
+    renderResult(fallback(u));
+  }
+}
+
+function fallback(u) {
+  const n = u.name || 'there';
+  return {
+    intro: `Hey ${n} — I went looking this week with your goals in mind, and I found 5 things that genuinely match where you're trying to go. These aren't random — each one is a real move.`,
+    opportunities: [
+      { title:"TEDxManhattan — Speaker Applications Open", type:"Speaking", description:"TEDx's NYC flagship event is accepting speaker proposals for their fall showcase. 600+ attendees, filmed and distributed on YouTube.", fit:"↳ A TEDx credit is one of the fastest ways to establish authority and attract the exact audience you're trying to reach.", cta:"Apply" },
+      { title:"Morning Brew — Guest Contributor Open Call", type:"Writing", description:"Morning Brew is actively seeking expert opinion pieces from practitioners. 4M daily readers. Pieces run 600–900 words.", fit:"↳ A byline here puts your thinking in front of your target audience every single morning.", cta:"Pitch" },
+      { title:"How I Built This (NPR) — Guest Pitch", type:"Podcast", description:"Guy Raz's show accepts guest pitches via their website. 1M+ weekly listeners. Looking for compelling builder stories.", fit:"↳ Your story is exactly what their audience tunes in for — getting on this show changes everything.", cta:"Pitch" },
+      { title:"PEN America Emerging Voices Fellowship", type:"Fellowship", description:"Annual fellowship for writers from underrepresented communities. Includes mentorship, community, stipend. Applications open Q1.", fit:"↳ The network from this program is worth more than any individual opportunity — past fellows consistently credit it with their first major break.", cta:"Apply" },
+      { title:"CreativeMornings NYC — Speaker Application", type:"Speaking", description:"Monthly breakfast events for the NYC creative community. Free to attend, speakers selected from the community. 200+ attendees.", fit:"↳ This is exactly the room where your goals and your audience overlap — editors, founders, creators, collaborators.", cta:"Apply" }
+    ],
+    recommendation: `Start with the TEDx application this week — the deadline is closer than you think and a strong application takes about an hour. Then pitch Morning Brew while your ideas are fresh. Those two moves alone could change your trajectory.`
+  };
+}
+
+function renderResult(data) {
+  clearInterval(window._li);
+  document.getElementById('load-bar').style.width = '100%';
+  setTimeout(() => {
+    document.getElementById('r-loading').style.display = 'none';
+    document.getElementById('r-content').style.display = 'block';
+
+    const n = u.name || '';
+    document.getElementById('r-title').innerHTML = n ? `Hey ${n} —<br>Here are your five.` : `Here are your five.`;
+    document.getElementById('r-intro').innerHTML = (data.intro||'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+
+    const cards = document.getElementById('r-cards');
+    cards.innerHTML = '';
+    (data.opportunities||[]).forEach((o,i) => {
+      const d = document.createElement('div');
+      d.className = `r-opp-card fade-up d${i+1}`;
+      d.innerHTML = `
+        <div class="r-top">
+          <div class="r-title"><span style="font-size:11px;color:var(--muted);font-weight:400;">0${i+1} &nbsp;</span>${o.title}</div>
+          <div class="r-badge">${o.type}</div>
+        </div>
+        <div class="r-desc">${o.description}</div>
+        <div class="r-fit">${o.fit}</div>
+        <a class="r-cta">${o.cta} →</a>
+      `;
+      cards.appendChild(d);
+    });
+
+    if(data.recommendation) {
+      document.getElementById('r-rec-text').innerHTML = data.recommendation.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+      document.getElementById('r-rec').style.display = 'block';
+    }
+  }, 500);
+}
+
+function startLoading() {
+  const msgs = [
+    'Searching for opportunities that match your goals...',
+    'Checking speaking calls, podcast openings, writing briefs...',
+    'Filtering by your interests and topics...',
+    'Putting together your personal Lineup...'
+  ];
+  let i = 0, w = 0;
+  const bar = document.getElementById('load-bar');
+  const lbl = document.getElementById('load-msg');
+  window._li = setInterval(() => {
+    w = Math.min(w+22, 82);
+    bar.style.width = w+'%';
+    if(i < msgs.length) lbl.textContent = msgs[i++];
+  }, 900);
+}
+</script>
 </body>
 </html>
