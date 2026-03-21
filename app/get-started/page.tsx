@@ -24,15 +24,8 @@ interface Message {
 const INITIAL_MESSAGE: Message = {
   id: "1",
   role: "assistant",
-  content: "Hey! So glad you're here. I'm going to ask you a few quick questions so I can find opportunities that are actually perfect for YOU.\n\nType or tap the mic — whatever feels right.",
+  content: "Hey! So glad you're here. I'm going to ask you a few quick questions so I can find opportunities that are actually perfect for YOU.\n\nFirst things first — what's your name?",
   options: []
-}
-
-const SECOND_MESSAGE: Message = {
-  id: "2", 
-  role: "assistant",
-  content: "Alright, let's do this! What do you do? What's your main thing?",
-  options: ["Speaker / Presenter", "Writer / Author", "Artist / Creative", "Founder / Builder", "Consultant / Expert", "Musician / Performer"]
 }
 
 export default function GetStartedPage() {
@@ -46,7 +39,11 @@ export default function GetStartedPage() {
   const [isListening, setIsListening] = useState(false)
   const [lineup, setLineup] = useState<Opportunity[]>([])
   const [isLoadingLineup, setIsLoadingLineup] = useState(false)
-  const [isInitialized, setIsInitialized] = useState(false)
+  const [userName, setUserName] = useState("")
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([])
+  const [pendingEmail, setPendingEmail] = useState("")
+  const [awaitingEmailConfirm, setAwaitingEmailConfirm] = useState(false)
+  const [showLineupOnly, setShowLineupOnly] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const recognitionRef = useRef<SpeechRecognition | null>(null)
@@ -59,16 +56,7 @@ export default function GetStartedPage() {
     scrollToBottom()
   }, [messages, scrollToBottom])
 
-  // Show second message after a delay
-  useEffect(() => {
-    if (!isInitialized) {
-      const timer = setTimeout(() => {
-        setMessages(prev => [...prev, SECOND_MESSAGE])
-        setIsInitialized(true)
-      }, 1500)
-      return () => clearTimeout(timer)
-    }
-  }, [isInitialized])
+  
 
   // Initialize speech recognition
   useEffect(() => {
@@ -108,7 +96,22 @@ export default function GetStartedPage() {
     }
   }
 
+  // Step 0: Name (initial message asks this)
+  // Step 1: Role selection (multi-select)
+  // Step 2: Visibility
+  // Step 3: Topics  
+  // Step 4: Goals
+  // Step 5: Email
+  // Step 6: Email confirmation
+  
+  const ROLE_OPTIONS = ["Speaker / Presenter", "Writer / Author", "Artist / Creative", "Founder / Builder", "Consultant / Expert", "Musician / Performer", "Athlete", "Coach / Trainer"]
+  
   const conversationFlow = [
+    {
+      question: "What do you do? Check all that apply — then hit 'Continue' when you're done!",
+      options: ROLE_OPTIONS,
+      multiSelect: true
+    },
     {
       question: "Love it! Now what kind of visibility would really move the needle for you right now?",
       options: ["Speaking gigs", "Podcast guest spots", "Getting published", "Brand partnerships", "Grants & funding", "All of the above"]
@@ -133,21 +136,22 @@ export default function GetStartedPage() {
     const isLong = wordCount > 30
 
     // Handle very short responses
-    if (isShort && stepNum !== 4) {
+    if (isShort && stepNum !== 5) {
       const shortResponses: Record<number, string[]> = {
-        0: [
-          "That's awesome! Tell me a bit more — is that your main focus?",
-          "Love it! Is that full-time or something you're building on the side?"
-        ],
         1: [
+          "Great combination!",
+          "Love that mix!",
+          "Perfect, I can work with that!"
+        ],
+        2: [
           "Great choice! Why is that the priority right now?",
           "Smart! What's driving that focus?"
         ],
-        2: [
+        3: [
           "Ooh interesting! Tell me more about your specific angle?",
           "That's cool! Can you give me a concrete example?"
         ],
-        3: [
+        4: [
           "I love that vision! What would that actually look like for you?",
           "That's inspiring! Paint the picture a bit more for me?"
         ]
@@ -161,18 +165,12 @@ export default function GetStartedPage() {
       return "Wow, I love all this detail! There are going to be SO many opportunities for you."
     }
 
-    // Standard follow-ups based on role selection - more enthusiastic!
+    // Standard follow-ups based on step - more enthusiastic!
     const followUps: Record<number, Record<string, string>> = {
-      0: {
-        "Speaker / Presenter": "YES! Speakers have incredible opportunities out there — stages, podcasts, panels. You're going to love what I find.",
-        "Writer / Author": "Amazing! Writers can build such powerful audiences. I'm already thinking of opportunities for you.",
-        "Artist / Creative": "So exciting! The creative space is FULL of grants, residencies, and collabs waiting for you.",
-        "Founder / Builder": "Love it! Founders building in public have massive visibility opportunities. This is going to be good.",
-        "Consultant / Expert": "Perfect! Positioning yourself as an expert opens so many doors. I can already see the possibilities.",
-        "Musician / Performer": "This is great! Music has so many angles — festivals, podcasts, brand work. You're in the right place.",
-        "default": "This is going to be exciting!"
-      },
       1: {
+        "default": "Awesome combination! I can already see some great opportunities for you."
+      },
+      2: {
         "All of the above": "I love the ambition! We're going to cast a wide net and find you some gems.",
         "Speaking gigs": "Speaking is HUGE for building credibility. I've got some great stages in mind.",
         "Podcast guest spots": "Podcasts are such a powerful way to reach new audiences. Perfect choice.",
@@ -181,10 +179,10 @@ export default function GetStartedPage() {
         "Grants & funding": "There's SO much grant money out there that people don't know about. I'll find it for you.",
         "default": "Great focus! This is going to be good."
       },
-      2: {
+      3: {
         "default": "That's a powerful niche to own! I can already see some perfect fits."
       },
-      3: {
+      4: {
         "default": "I love that vision! Let's make it happen."
       }
     }
@@ -203,22 +201,21 @@ export default function GetStartedPage() {
     }
     setMessages(prev => [...prev, userMessage])
     setInput("")
-    
-    // Store user data
-    const stepKeys = ["role", "visibility", "topics", "goals", "email"]
-    setUserData(prev => ({ ...prev, [stepKeys[step]]: content.trim() }))
 
-    // Check if this is the email step
-    if (step === 4) {
-      if (content.includes("@") && content.includes(".")) {
-        setEmail(content.trim())
+    // Handle email confirmation step
+    if (awaitingEmailConfirm) {
+      const answer = content.trim().toLowerCase()
+      if (answer === "yes" || answer === "y" || answer === "yep" || answer === "yeah" || answer === "correct" || answer === "that's right") {
+        // Confirmed! Process signup
+        setEmail(pendingEmail)
+        setAwaitingEmailConfirm(false)
         setIsTyping(true)
         setIsLoadingLineup(true)
         
         const loadingMessage: Message = {
           id: Date.now().toString(),
           role: "assistant",
-          content: "Perfect! Give me just a sec — I'm finding your first 5 opportunities right now..."
+          content: `Amazing, ${userName}! Give me just a sec — I'm finding your first 5 opportunities right now...`
         }
         setMessages(prev => [...prev, loadingMessage])
         
@@ -228,8 +225,9 @@ export default function GetStartedPage() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              email: content.trim(),
-              role: userData.role || "",
+              email: pendingEmail,
+              name: userName,
+              role: selectedRoles.join(", ") || userData.role || "",
               visibility: userData.visibility || "",
               topics: userData.topics || "",
               goals: userData.goals || ""
@@ -242,23 +240,16 @@ export default function GetStartedPage() {
           
           if (data.success && data.opportunities) {
             setLineup(data.opportunities)
-            
-            const successMessage: Message = {
-              id: Date.now().toString(),
-              role: "assistant",
-              content: `HERE WE GO! I found 5 amazing opportunities just for you. Check them out below — and I've already sent them to your inbox too!\n\nYour first 4 weeks are free. After that it's $9/month to keep these personalized opportunities coming every Monday.`
-            }
-            setMessages(prev => [...prev, successMessage])
+            setShowLineupOnly(true) // Hide chat, show only lineup
+            setShowPayment(true)
           } else {
-            const successMessage: Message = {
+            const errorMsg: Message = {
               id: Date.now().toString(),
               role: "assistant",
-              content: data.error || `You're in! Your first opportunities are on the way to your inbox.\n\nFirst 4 weeks are free. After that it's $9/month to keep them coming.`
+              content: data.error || "Something went wrong. Try again?"
             }
-            setMessages(prev => [...prev, successMessage])
+            setMessages(prev => [...prev, errorMsg])
           }
-          
-          setShowPayment(true)
         } catch {
           setIsTyping(false)
           setIsLoadingLineup(false)
@@ -270,7 +261,68 @@ export default function GetStartedPage() {
           }
           setMessages(prev => [...prev, errorMessage])
         }
+        return
+      } else {
+        // They said no, ask for email again
+        setAwaitingEmailConfirm(false)
+        setPendingEmail("")
+        setIsTyping(true)
+        await new Promise(r => setTimeout(r, 600))
+        setIsTyping(false)
         
+        const retryMessage: Message = {
+          id: Date.now().toString(),
+          role: "assistant",
+          content: "No problem! What's the correct email?"
+        }
+        setMessages(prev => [...prev, retryMessage])
+        return
+      }
+    }
+
+    // Step 0: Name
+    if (step === 0) {
+      const name = content.trim().split(" ")[0] // Get first name
+      setUserName(name)
+      setUserData(prev => ({ ...prev, name: content.trim() }))
+      
+      setIsTyping(true)
+      await new Promise(r => setTimeout(r, 800))
+      setIsTyping(false)
+      
+      const nextQuestion = conversationFlow[0]
+      const assistantMessage: Message = {
+        id: Date.now().toString(),
+        role: "assistant",
+        content: `Great to meet you, ${name}! ${nextQuestion.question}`,
+        options: nextQuestion.options
+      }
+      setMessages(prev => [...prev, assistantMessage])
+      setStep(1)
+      return
+    }
+    
+    // Store user data for non-name steps
+    const stepKeys = ["", "role", "visibility", "topics", "goals", "email"]
+    setUserData(prev => ({ ...prev, [stepKeys[step]]: content.trim() }))
+
+    // Check if this is the email step (step 5)
+    if (step === 5) {
+      if (content.includes("@") && content.includes(".")) {
+        // Ask for confirmation
+        setPendingEmail(content.trim())
+        setAwaitingEmailConfirm(true)
+        
+        setIsTyping(true)
+        await new Promise(r => setTimeout(r, 600))
+        setIsTyping(false)
+        
+        const confirmMessage: Message = {
+          id: Date.now().toString(),
+          role: "assistant",
+          content: `Got it — I have ${content.trim()}. Is that correct?`
+        }
+        setMessages(prev => [...prev, confirmMessage])
         return
       } else {
         setIsTyping(true)
@@ -296,9 +348,9 @@ export default function GetStartedPage() {
     // Get smart response
     const smartResponse = getSmartResponse(content.trim(), step)
     
-    // Check if we need to probe more (short answer)
+    // Check if we need to probe more (short answer) - skip for multi-select role step
     const wordCount = content.trim().split(/\s+/).length
-    const needsMoreInfo = wordCount < 4 && step !== 4
+    const needsMoreInfo = wordCount < 4 && step !== 5 && step !== 1
     
     if (needsMoreInfo && Math.random() > 0.3) {
       // Sometimes ask for more detail
@@ -309,15 +361,14 @@ export default function GetStartedPage() {
         content: smartResponse
       }
       setMessages(prev => [...prev, probeMessage])
-      // Don't advance step - wait for more info
       return
     }
 
     setIsTyping(false)
 
-    // Get next question
-    const nextStep = step + 1
-    const nextQuestion = conversationFlow[nextStep]
+    // Get next question (adjust for new step numbering)
+    const nextFlowIndex = step // step 1 -> conversationFlow[1], etc.
+    const nextQuestion = conversationFlow[nextFlowIndex]
 
     if (nextQuestion) {
       const responseContent = `${smartResponse} ${nextQuestion.question}`
@@ -329,12 +380,32 @@ export default function GetStartedPage() {
         options: nextQuestion.options
       }
       setMessages(prev => [...prev, assistantMessage])
-      setStep(nextStep)
+      setStep(step + 1)
     }
   }
 
   const handleOptionClick = (option: string) => {
-    handleSendMessage(option)
+    // Check if this is a multi-select step (role selection at step 1)
+    if (step === 1) {
+      // Toggle selection
+      setSelectedRoles(prev => {
+        if (prev.includes(option)) {
+          return prev.filter(r => r !== option)
+        } else {
+          return [...prev, option]
+        }
+      })
+    } else {
+      handleSendMessage(option)
+    }
+  }
+  
+  const handleContinueRoles = () => {
+    if (selectedRoles.length > 0) {
+      const rolesText = selectedRoles.join(", ")
+      handleSendMessage(rolesText)
+      setSelectedRoles([]) // Reset for next time
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -363,7 +434,8 @@ export default function GetStartedPage() {
       {/* Messages */}
       <main className="flex-1 pt-20 pb-32 overflow-y-auto">
         <div className="w-full max-w-4xl mx-auto px-4 md:px-8 py-6 space-y-6">
-          {messages.map((message) => (
+          {/* Chat messages - hidden when showing lineup only */}
+          {!showLineupOnly && messages.map((message) => (
             <div 
               key={message.id} 
               className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
@@ -385,16 +457,36 @@ export default function GetStartedPage() {
                   
                   {/* Options */}
                   {message.options && message.options.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {message.options.map((option, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => handleOptionClick(option)}
-                          className="px-4 py-2 text-sm rounded-full border border-primary/40 text-primary hover:bg-primary/10 hover:border-primary transition-all cursor-pointer active:scale-95"
+                    <div className="mt-3">
+                      <div className="flex flex-wrap gap-2">
+                        {message.options.map((option, idx) => {
+                          const isSelected = step === 1 && selectedRoles.includes(option)
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => handleOptionClick(option)}
+                              className={`px-4 py-2 text-sm rounded-full border transition-all cursor-pointer active:scale-95 ${
+                                isSelected 
+                                  ? "bg-primary text-primary-foreground border-primary" 
+                                  : "border-primary/40 text-primary hover:bg-primary/10 hover:border-primary"
+                              }`}
+                            >
+                              {isSelected && <span className="mr-1">✓</span>}
+                              {option}
+                            </button>
+                          )
+                        })}
+                      </div>
+                      {/* Continue button for multi-select */}
+                      {step === 1 && selectedRoles.length > 0 && (
+                        <Button
+                          onClick={handleContinueRoles}
+                          className="mt-4 gradient-brand text-white font-semibold cursor-pointer"
                         >
-                          {option}
-                        </button>
-                      ))}
+                          Continue with {selectedRoles.length} selected
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -402,7 +494,7 @@ export default function GetStartedPage() {
             </div>
           ))}
           
-          {isTyping && (
+          {isTyping && !showLineupOnly && (
             <div className="flex justify-start">
               <div className="flex gap-3">
                 <div className="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shrink-0">
@@ -432,6 +524,16 @@ export default function GetStartedPage() {
           {/* Lineup Display */}
           {lineup.length > 0 && (
             <div className="mt-6 space-y-4">
+              {showLineupOnly && (
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+                    Here you go, {userName}!
+                  </h2>
+                  <p className="text-lg text-muted-foreground">
+                    Your first 5 opportunities are ready. I've also sent them to your inbox at {email}.
+                  </p>
+                </div>
+              )}
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full gradient-brand flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
@@ -511,7 +613,8 @@ export default function GetStartedPage() {
         </div>
       </main>
 
-      {/* Fixed Input */}
+      {/* Fixed Input - hidden when showing lineup */}
+      {!showLineupOnly && (
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 pb-safe">
         <div className="max-w-4xl mx-auto px-4 md:px-8">
           <div className="flex gap-3 items-end">
@@ -521,7 +624,7 @@ export default function GetStartedPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={step === 6 ? "your@email.com" : "Type or tap mic to talk..."}
+                placeholder={step === 5 ? "your@email.com" : awaitingEmailConfirm ? "Yes or No" : "Type or tap mic to talk..."}
                 disabled={showPayment}
                 rows={1}
                 className="w-full min-h-[52px] max-h-32 px-5 py-3.5 pr-14 bg-secondary border border-border rounded-2xl text-white placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none text-base"
@@ -556,6 +659,7 @@ export default function GetStartedPage() {
           </p>
         </div>
       </div>
+      )}
     </div>
   )
 }
