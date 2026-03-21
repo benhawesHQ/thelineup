@@ -9,7 +9,7 @@ declare global {
 }
 
 import { useState, useEffect, useRef } from "react"
-import { ArrowRight, ArrowLeft, Check, Loader2, Sparkles, ExternalLink, Mail, Mic, MicOff } from "lucide-react"
+import { ArrowRight, ArrowLeft, Check, Loader2, Sparkles, ExternalLink, Mail, Mic, MicOff, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LogoMark } from "@/components/logo"
 import Link from "next/link"
@@ -40,10 +40,18 @@ interface QuizStep {
 
 const QUIZ_STEPS: QuizStep[] = [
   {
+    id: "email",
+    type: "email",
+    question: "Let's start with your email",
+    subtitle: "So we can send you your personalized opportunities",
+    placeholder: "you@example.com",
+    required: true
+  },
+  {
     id: "name",
     type: "text",
-    question: "First, what's your name?",
-    subtitle: "We'll use this to personalize your opportunities",
+    question: "What's your name?",
+    subtitle: "We'll use this to personalize your lineup",
     placeholder: "Your first name",
     required: true
   },
@@ -51,7 +59,7 @@ const QUIZ_STEPS: QuizStep[] = [
     id: "roles",
     type: "multiselect",
     question: "What do you do?",
-    subtitle: "Select all that apply",
+    subtitle: "Select all that apply — we love multi-hyphenates!",
     options: [
       "Speaker / Presenter",
       "Writer / Author", 
@@ -82,16 +90,16 @@ const QUIZ_STEPS: QuizStep[] = [
     id: "topics",
     type: "textarea",
     question: "Tell me about your expertise",
-    subtitle: "What do you want to be known for? Speak naturally - you can use the mic!",
-    placeholder: "I want to be known as the go-to person for AI and entrepreneurship. I talk about building startups, tech trends, and helping people break into the industry...",
+    subtitle: "What do you want to be known for? Be specific — mention your business, niche, or unique angle.",
+    placeholder: "I run a Photo Booth business and speak about event entrepreneurship. I'm also passionate about helping creatives monetize their skills and land corporate clients...",
     required: true
   },
   {
     id: "goals",
     type: "textarea",
     question: "What are you working toward?",
-    subtitle: "Dream big - what does success look like for you?",
-    placeholder: "I want to land a TEDx talk, get featured in major publications, and eventually become a recognizable voice in my industry. I'm building toward becoming a full-time speaker and author...",
+    subtitle: "Be specific! Mention dream stages, publications, or milestones.",
+    placeholder: "I want to land a TEDx talk on creative entrepreneurship, get featured in Entrepreneur Magazine, and become a go-to speaker for corporate events in the events industry...",
     required: true
   },
   {
@@ -115,17 +123,9 @@ const QUIZ_STEPS: QuizStep[] = [
     required: true
   },
   {
-    id: "email",
-    type: "email",
-    question: "Last one! Where should we send your opportunities?",
-    subtitle: "We'll send your first 5 right away",
-    placeholder: "you@example.com",
-    required: true
-  },
-  {
     id: "confirm",
     type: "confirm",
-    question: "Is this email correct?",
+    question: "Ready to see your opportunities?",
     subtitle: "",
     required: true
   }
@@ -141,9 +141,9 @@ export default function GetStartedPage() {
   const [isComplete, setIsComplete] = useState(false)
   const [lineup, setLineup] = useState<Opportunity[]>([])
   const [showPayment, setShowPayment] = useState(false)
-  const [pendingEmail, setPendingEmail] = useState("")
   const [isRecording, setIsRecording] = useState(false)
   const [recordingTime, setRecordingTime] = useState(0)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
@@ -151,6 +151,61 @@ export default function GetStartedPage() {
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null)
   
   const MAX_RECORDING_TIME = 300 // 5 minutes in seconds
+  const STORAGE_KEY = "thelineup_quiz_progress"
+
+  // Load saved progress on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        const { step, answers: savedAnswers } = JSON.parse(saved)
+        if (savedAnswers && Object.keys(savedAnswers).length > 0) {
+          setAnswers(savedAnswers)
+          setCurrentStep(step || 0)
+        }
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, [])
+
+  // Save progress whenever answers change
+  useEffect(() => {
+    if (Object.keys(answers).length > 0) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          step: currentStep,
+          answers
+        }))
+        setHasUnsavedChanges(true)
+      } catch {
+        // Ignore localStorage errors
+      }
+    }
+  }, [answers, currentStep])
+
+  // Warn before closing tab
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges && !isComplete) {
+        e.preventDefault()
+        e.returnValue = ""
+        return ""
+      }
+    }
+    window.addEventListener("beforeunload", handleBeforeUnload)
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload)
+  }, [hasUnsavedChanges, isComplete])
+
+  // Clear storage on completion
+  const clearSavedProgress = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+      setHasUnsavedChanges(false)
+    } catch {
+      // Ignore
+    }
+  }
 
   const step = QUIZ_STEPS[currentStep]
   const progress = ((currentStep) / (QUIZ_STEPS.length - 1)) * 100
@@ -202,23 +257,24 @@ export default function GetStartedPage() {
       // Already saved on click
     }
 
-    // Handle email step - store email and move to confirmation
+    // Handle email step - save and continue
     if (step.type === "email") {
-      setPendingEmail(inputValue.trim())
+      setAnswers(prev => ({ ...prev, email: inputValue.trim() }))
       setCurrentStep(prev => prev + 1)
       return
     }
 
-    // Handle email confirmation - submit everything
+    // Handle confirmation - submit everything
     if (step.type === "confirm") {
       setIsLoading(true)
+      const email = answers.email as string
       try {
         const res = await fetch("/api/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: answers.name,
-            email: pendingEmail,
+            email,
             role: Array.isArray(answers.roles) ? answers.roles.join(", ") : "",
             visibility: Array.isArray(answers.visibility) ? answers.visibility.join(", ") : (answers.visibility || ""),
             topics: answers.topics || "",
@@ -229,7 +285,7 @@ export default function GetStartedPage() {
         })
         const data = await res.json()
         if (data.success) {
-          setAnswers(prev => ({ ...prev, email: pendingEmail }))
+          clearSavedProgress()
           setLineup(data.opportunities || [])
           setIsComplete(true)
           setShowPayment(true)
@@ -549,8 +605,20 @@ export default function GetStartedPage() {
         />
       </div>
 
+      {/* Warning banner - shows after email entered */}
+      {answers.email && !isComplete && (
+        <div className="fixed top-1 left-0 right-0 z-50 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs">
+              <AlertTriangle className="w-3 h-3" />
+              <span>Don't close this tab — your progress is saved but we're building your lineup!</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
-      <header className="fixed top-1 left-0 right-0 z-40 px-4 py-4">
+      <header className={`fixed ${answers.email && !isComplete ? 'top-10' : 'top-1'} left-0 right-0 z-40 px-4 py-4 transition-all`}>
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
             <LogoMark size={28} />
@@ -673,47 +741,51 @@ export default function GetStartedPage() {
                   </div>
                 )}
 
-                {/* Email confirmation */}
+                {/* Confirmation - show summary */}
                 {step.type === "confirm" && (
                   <div className="space-y-6">
-                    <div className="p-6 md:p-8 rounded-2xl bg-secondary/50 border-2 border-border">
-                      <div className="flex items-center gap-3 mb-3">
-                        <Mail className="w-6 h-6 text-primary" />
-                        <span className="text-muted-foreground">Your email</span>
+                    {/* Summary */}
+                    <div className="p-5 md:p-6 rounded-2xl bg-secondary/50 border border-border space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Check className="w-5 h-5 text-green-500" />
+                        <span className="text-white font-medium">Sending opportunities to:</span>
+                        <span className="text-primary font-semibold">{answers.email as string}</span>
                       </div>
-                      <p className="text-2xl md:text-3xl font-medium text-white break-all">
-                        {pendingEmail}
-                      </p>
+                      <div className="flex items-center gap-3">
+                        <Check className="w-5 h-5 text-green-500" />
+                        <span className="text-white font-medium">Looking for:</span>
+                        <span className="text-muted-foreground">
+                          {Array.isArray(answers.visibility) ? answers.visibility.slice(0, 3).join(", ") : "opportunities"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Check className="w-5 h-5 text-green-500" />
+                        <span className="text-white font-medium">Based in:</span>
+                        <span className="text-muted-foreground">{answers.city as string}</span>
+                      </div>
                     </div>
-                    <div className="flex gap-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setCurrentStep(prev => prev - 1)
-                          setInputValue(pendingEmail)
-                        }}
-                        className="flex-1 h-14 text-lg border-2 cursor-pointer"
-                      >
-                        Edit email
-                      </Button>
-                      <Button
-                        onClick={handleNext}
-                        disabled={isLoading}
-                        className="flex-1 h-14 text-lg gradient-brand text-white cursor-pointer"
-                      >
-                        {isLoading ? (
-                          <>
-                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                            Finding opportunities...
-                          </>
-                        ) : (
-                          <>
-                            Yes, show me my lineup!
-                            <ArrowRight className="w-5 h-5 ml-2" />
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                    
+                    <Button
+                      onClick={handleNext}
+                      disabled={isLoading}
+                      className="w-full h-16 text-xl gradient-brand text-white cursor-pointer"
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+                          Finding your opportunities...
+                        </>
+                      ) : (
+                        <>
+                          Show me my lineup!
+                          <ArrowRight className="w-6 h-6 ml-3" />
+                        </>
+                      )}
+                    </Button>
+                    
+                    <p className="text-center text-sm text-muted-foreground">
+                      We'll search for specific opportunities that match your profile
+                    </p>
                   </div>
                 )}
 
