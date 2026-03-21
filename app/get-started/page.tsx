@@ -1,10 +1,18 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { Send, Mic, MicOff, ArrowRight, Sparkles } from "lucide-react"
+import { Send, Mic, MicOff, ArrowRight, Sparkles, ExternalLink, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Logo, LogoMark } from "@/components/logo"
 import Link from "next/link"
+
+interface Opportunity {
+  title: string
+  link: string
+  type: string
+  deadline?: string
+  reason: string
+}
 
 interface Message {
   id: string
@@ -16,14 +24,14 @@ interface Message {
 const INITIAL_MESSAGE: Message = {
   id: "1",
   role: "assistant",
-  content: "Hey! Welcome to The Lineup. I'm going to ask you a few quick questions so I can find opportunities that actually make sense for you.\n\nYou can type, or tap the mic to talk — whatever's easier.",
+  content: "Hey! So glad you're here. I'm going to ask you a few quick questions so I can find opportunities that are actually perfect for YOU.\n\nType or tap the mic — whatever feels right.",
   options: []
 }
 
 const SECOND_MESSAGE: Message = {
   id: "2", 
   role: "assistant",
-  content: "So first up — what do you do? What's your main thing?",
+  content: "Alright, let's do this! What do you do? What's your main thing?",
   options: ["Speaker / Presenter", "Writer / Author", "Artist / Creative", "Founder / Builder", "Consultant / Expert", "Musician / Performer"]
 }
 
@@ -36,6 +44,8 @@ export default function GetStartedPage() {
   const [showPayment, setShowPayment] = useState(false)
   const [email, setEmail] = useState("")
   const [isListening, setIsListening] = useState(false)
+  const [lineup, setLineup] = useState<Opportunity[]>([])
+  const [isLoadingLineup, setIsLoadingLineup] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -100,19 +110,19 @@ export default function GetStartedPage() {
 
   const conversationFlow = [
     {
-      question: "And what kind of visibility are you looking for? What would really move the needle for you?",
+      question: "Love it! Now what kind of visibility would really move the needle for you right now?",
       options: ["Speaking gigs", "Podcast guest spots", "Getting published", "Brand partnerships", "Grants & funding", "All of the above"]
     },
     {
-      question: "What topics or areas are you known for? Or want to be known for?",
+      question: "This is exciting! What topics or areas are you known for? Or want to be known for?",
       options: []
     },
     {
-      question: "What's the big picture goal? Where do you want this to take you?",
+      question: "I can already see some great opportunities for you. What's the big picture goal? Where do you want this to take you?",
       options: []
     },
     {
-      question: "Perfect. Drop your email and I'll send your first Lineup this Monday at 9am. First 4 weeks are free.",
+      question: "I've got some amazing stuff lined up for you already. Drop your email and I'll show you your first 5 opportunities right now — plus send them to your inbox!",
       options: []
     }
   ]
@@ -126,60 +136,60 @@ export default function GetStartedPage() {
     if (isShort && stepNum !== 4) {
       const shortResponses: Record<number, string[]> = {
         0: [
-          "Got it! Quick question though — is that your main focus or more of a side thing?",
-          "Nice. Do you do that full-time or alongside something else?"
+          "That's awesome! Tell me a bit more — is that your main focus?",
+          "Love it! Is that full-time or something you're building on the side?"
         ],
         1: [
-          "Okay cool. Any particular reason that's the priority right now?",
-          "Got it. Is there a specific goal driving that?"
+          "Great choice! Why is that the priority right now?",
+          "Smart! What's driving that focus?"
         ],
         2: [
-          "Tell me a bit more — like what specific angle or niche?",
-          "Interesting. Can you give me a concrete example?"
+          "Ooh interesting! Tell me more about your specific angle?",
+          "That's cool! Can you give me a concrete example?"
         ],
         3: [
-          "Love it. What would that actually look like for you?",
-          "I want to make sure I get this right — can you paint the picture a bit more?"
+          "I love that vision! What would that actually look like for you?",
+          "That's inspiring! Paint the picture a bit more for me?"
         ]
       }
-      const options = shortResponses[stepNum] || ["Tell me more about that."]
+      const options = shortResponses[stepNum] || ["Tell me more!"]
       return options[Math.floor(Math.random() * options.length)]
     }
 
     // Handle very long responses
     if (isLong) {
-      return "Wow, that's a lot — I love the detail! Let me process that."
+      return "Wow, I love all this detail! There are going to be SO many opportunities for you."
     }
 
-    // Standard follow-ups based on role selection
+    // Standard follow-ups based on role selection - more enthusiastic!
     const followUps: Record<number, Record<string, string>> = {
       0: {
-        "Speaker / Presenter": "Nice! Speakers have amazing opportunities out there.",
-        "Writer / Author": "Love that. Writers can really build an audience through the right placements.",
-        "Artist / Creative": "Awesome. The creative space is full of grants, residencies, and collabs.",
-        "Founder / Builder": "Perfect. Founders building in public have huge visibility opportunities.",
-        "Consultant / Expert": "Great. Positioning yourself as an expert opens a lot of doors.",
-        "Musician / Performer": "Cool! Music has so many angles — festivals, podcasts, brand work.",
-        "default": "Got it, that works."
+        "Speaker / Presenter": "YES! Speakers have incredible opportunities out there — stages, podcasts, panels. You're going to love what I find.",
+        "Writer / Author": "Amazing! Writers can build such powerful audiences. I'm already thinking of opportunities for you.",
+        "Artist / Creative": "So exciting! The creative space is FULL of grants, residencies, and collabs waiting for you.",
+        "Founder / Builder": "Love it! Founders building in public have massive visibility opportunities. This is going to be good.",
+        "Consultant / Expert": "Perfect! Positioning yourself as an expert opens so many doors. I can already see the possibilities.",
+        "Musician / Performer": "This is great! Music has so many angles — festivals, podcasts, brand work. You're in the right place.",
+        "default": "This is going to be exciting!"
       },
       1: {
-        "All of the above": "Ha, ambitious. I like it. We'll cast a wide net.",
-        "Speaking gigs": "Speaking is huge for building credibility.",
-        "Podcast guest spots": "Podcasts are such a good way to reach new audiences.",
-        "Getting published": "Bylines can really establish you as a thought leader.",
-        "Brand partnerships": "Brand deals can be great for visibility and income.",
-        "Grants & funding": "There's way more grant money out there than people realize.",
-        "default": "Solid focus."
+        "All of the above": "I love the ambition! We're going to cast a wide net and find you some gems.",
+        "Speaking gigs": "Speaking is HUGE for building credibility. I've got some great stages in mind.",
+        "Podcast guest spots": "Podcasts are such a powerful way to reach new audiences. Perfect choice.",
+        "Getting published": "Bylines can really establish you as the go-to expert. Great strategy.",
+        "Brand partnerships": "Brand deals can be amazing for visibility AND income. Smart move.",
+        "Grants & funding": "There's SO much grant money out there that people don't know about. I'll find it for you.",
+        "default": "Great focus! This is going to be good."
       },
       2: {
-        "default": "That's a great niche to own."
+        "default": "That's a powerful niche to own! I can already see some perfect fits."
       },
       3: {
-        "default": "Love the vision."
+        "default": "I love that vision! Let's make it happen."
       }
     }
     
-    return followUps[stepNum]?.[answer] || followUps[stepNum]?.["default"] || "Got it."
+    return followUps[stepNum]?.[answer] || followUps[stepNum]?.["default"] || "This is exciting!"
   }
 
   const handleSendMessage = async (content: string) => {
@@ -203,32 +213,62 @@ export default function GetStartedPage() {
       if (content.includes("@") && content.includes(".")) {
         setEmail(content.trim())
         setIsTyping(true)
-        await new Promise(r => setTimeout(r, 1200))
-        setIsTyping(false)
+        setIsLoadingLineup(true)
         
-        const successMessage: Message = {
+        const loadingMessage: Message = {
           id: Date.now().toString(),
           role: "assistant",
-          content: `You're in. Your first Lineup drops this Monday at 9am with 5 handpicked opportunities just for you.\n\nFirst 4 weeks are free. After that it's $9/month to keep them coming.`
+          content: "Perfect! Give me just a sec — I'm finding your first 5 opportunities right now..."
         }
-        setMessages(prev => [...prev, successMessage])
-        setShowPayment(true)
+        setMessages(prev => [...prev, loadingMessage])
         
-        // Submit to API
+        // Submit to API and get lineup
         try {
-          await fetch("/api/signup", {
+          const res = await fetch("/api/signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               email: content.trim(),
-              name: "",
-              location: "",
-              interests: [userData.role, userData.visibility].filter(Boolean),
+              role: userData.role || "",
+              visibility: userData.visibility || "",
+              topics: userData.topics || "",
               goals: userData.goals || ""
             })
           })
+          
+          const data = await res.json()
+          setIsTyping(false)
+          setIsLoadingLineup(false)
+          
+          if (data.success && data.opportunities) {
+            setLineup(data.opportunities)
+            
+            const successMessage: Message = {
+              id: Date.now().toString(),
+              role: "assistant",
+              content: `HERE WE GO! I found 5 amazing opportunities just for you. Check them out below — and I've already sent them to your inbox too!\n\nYour first 4 weeks are free. After that it's $9/month to keep these personalized opportunities coming every Monday.`
+            }
+            setMessages(prev => [...prev, successMessage])
+          } else {
+            const successMessage: Message = {
+              id: Date.now().toString(),
+              role: "assistant",
+              content: data.error || `You're in! Your first opportunities are on the way to your inbox.\n\nFirst 4 weeks are free. After that it's $9/month to keep them coming.`
+            }
+            setMessages(prev => [...prev, successMessage])
+          }
+          
+          setShowPayment(true)
         } catch {
-          // Silently fail - user is already signed up visually
+          setIsTyping(false)
+          setIsLoadingLineup(false)
+          
+          const errorMessage: Message = {
+            id: Date.now().toString(),
+            role: "assistant",
+            content: "Hmm, something went sideways. Try that email again?"
+          }
+          setMessages(prev => [...prev, errorMessage])
         }
         
         return
@@ -240,7 +280,7 @@ export default function GetStartedPage() {
         const retryMessage: Message = {
           id: Date.now().toString(),
           role: "assistant",
-          content: "That doesn't look quite right — need a valid email to send you the goods."
+          content: "That doesn't look quite right — I need a valid email to send you the goods!"
         }
         setMessages(prev => [...prev, retryMessage])
         return
@@ -376,6 +416,65 @@ export default function GetStartedPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Loading Lineup Indicator */}
+          {isLoadingLineup && (
+            <div className="mt-6 p-6 rounded-2xl bg-secondary/50 border border-border">
+              <div className="flex items-center gap-3">
+                <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                <p className="text-white">Finding your perfect opportunities...</p>
+              </div>
+            </div>
+          )}
+
+          {/* Lineup Display */}
+          {lineup.length > 0 && (
+            <div className="mt-6 space-y-4">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-full gradient-brand flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Your First Lineup</h3>
+                  <p className="text-sm text-muted-foreground">5 opportunities picked just for you</p>
+                </div>
+              </div>
+              
+              {lineup.map((opp, idx) => (
+                <a
+                  key={idx}
+                  href={opp.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-5 rounded-2xl bg-secondary/80 border border-border hover:border-primary/50 transition-all group"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shrink-0 text-white font-bold text-lg">
+                      {idx + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-primary">{opp.type}</span>
+                        {opp.deadline && (
+                          <span className="text-xs text-muted-foreground">Deadline: {opp.deadline}</span>
+                        )}
+                      </div>
+                      <h4 className="text-white font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2">
+                        {opp.title}
+                      </h4>
+                      <p className="text-sm text-muted-foreground mt-2 italic line-clamp-2">
+                        "{opp.reason}"
+                      </p>
+                      <div className="flex items-center gap-1 mt-3 text-sm text-primary font-medium">
+                        <span>View opportunity</span>
+                        <ExternalLink className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              ))}
             </div>
           )}
 

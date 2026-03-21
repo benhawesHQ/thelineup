@@ -37,12 +37,16 @@ export async function POST(request: Request) {
     }
     users.set(email, user)
     
-    // Generate and send first email in the background
-    processUserLineup(user).catch(console.error)
+    // Generate lineup synchronously so we can return it
+    const opportunities = await generateUserLineup(user)
+    
+    // Send email in background (don't await)
+    sendUserEmail(user, opportunities).catch(console.error)
 
     return NextResponse.json({ 
       success: true, 
-      message: "You're in! Your first Lineup arrives Monday at 9am." 
+      message: "You're in! Here's your first Lineup.",
+      opportunities
     })
   } catch (error) {
     console.error("Signup error:", error)
@@ -53,13 +57,21 @@ export async function POST(request: Request) {
   }
 }
 
-async function processUserLineup(user: OnboardingData & { id: string }) {
+interface Opportunity {
+  title: string
+  link: string
+  type: string
+  deadline?: string
+  reason: string
+}
+
+async function generateUserLineup(user: OnboardingData & { id: string }): Promise<Opportunity[]> {
   // Create a user object compatible with existing functions
   const userForSearch = {
     id: user.id,
-    name: user.email.split("@")[0], // Use email prefix as name
+    name: user.email.split("@")[0],
     email: user.email,
-    location: "US", // Default
+    location: "US",
     interests: `${user.role}, ${user.visibility}, ${user.topics}`,
     goals: user.goals,
     createdAt: new Date().toISOString(),
@@ -80,9 +92,28 @@ async function processUserLineup(user: OnboardingData & { id: string }) {
   // Dedupe results
   const uniqueResults = dedupeResults(allResults)
   
-  // Generate personalized email with AI
+  // Generate personalized opportunities with AI
   const emailContent = await generateEmail(userForSearch, uniqueResults)
   
-  // Send the email
-  await sendEmail(userForSearch, emailContent)
+  return emailContent.opportunities || []
+}
+
+async function sendUserEmail(user: OnboardingData & { id: string }, opportunities: Opportunity[]) {
+  const userForEmail = {
+    id: user.id,
+    name: user.email.split("@")[0],
+    email: user.email,
+    location: "US",
+    interests: `${user.role}, ${user.visibility}, ${user.topics}`,
+    goals: user.goals,
+    createdAt: new Date().toISOString(),
+    status: "free_trial" as const,
+    trialEndsAt: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString()
+  }
+  
+  await sendEmail(userForEmail, {
+    opportunities,
+    greeting: `Hey ${userForEmail.name}!\n\nWelcome to The Lineup! Here are your first 5 personalized opportunities — picked just for you based on what you shared.`,
+    signoff: `This is just the beginning! Every Monday at 9am, you'll get a fresh lineup of opportunities matched to your goals.\n\nGo make some noise!\n\n— The Lineup`
+  })
 }
