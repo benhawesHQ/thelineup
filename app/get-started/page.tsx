@@ -1,7 +1,15 @@
 "use client"
 
+// Type declarations for Web Speech API
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition
+    webkitSpeechRecognition: typeof SpeechRecognition
+  }
+}
+
 import { useState, useEffect, useRef } from "react"
-import { ArrowRight, ArrowLeft, Check, Loader2, Sparkles, ExternalLink, Mail, Send } from "lucide-react"
+import { ArrowRight, ArrowLeft, Check, Loader2, Sparkles, ExternalLink, Mail, Mic, MicOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LogoMark } from "@/components/logo"
 import Link from "next/link"
@@ -53,33 +61,32 @@ const QUIZ_STEPS: QuizStep[] = [
   },
   {
     id: "visibility",
-    type: "select",
-    question: "What kind of visibility matters most?",
-    subtitle: "Pick the one that would move the needle for you",
+    type: "multiselect",
+    question: "What kind of visibility are you looking for?",
+    subtitle: "Select all that apply - most people pick a few!",
     options: [
       "Speaking gigs",
       "Podcast guest spots",
       "Getting published",
       "Brand partnerships",
-      "Grants & funding",
-      "All of the above"
+      "Grants & funding"
     ],
     required: true
   },
   {
     id: "topics",
     type: "textarea",
-    question: "What topics are you known for?",
-    subtitle: "Or want to be known for",
-    placeholder: "AI, leadership, sustainability, comedy, fitness...",
+    question: "Tell me about your expertise",
+    subtitle: "What do you want to be known for? Speak naturally - you can use the mic!",
+    placeholder: "I want to be known as the go-to person for AI and entrepreneurship. I talk about building startups, tech trends, and helping people break into the industry...",
     required: true
   },
   {
     id: "goals",
     type: "textarea",
-    question: "What's your big picture goal?",
-    subtitle: "Where do you want this to take you?",
-    placeholder: "Land a TEDx talk, get published in Forbes, build my speaking business...",
+    question: "What are you working toward?",
+    subtitle: "Dream big - what does success look like for you?",
+    placeholder: "I want to land a TEDx talk, get featured in major publications, and eventually become a recognizable voice in my industry. I'm building toward becoming a full-time speaker and author...",
     required: true
   },
   {
@@ -130,8 +137,15 @@ export default function GetStartedPage() {
   const [lineup, setLineup] = useState<Opportunity[]>([])
   const [showPayment, setShowPayment] = useState(false)
   const [pendingEmail, setPendingEmail] = useState("")
+  const [isRecording, setIsRecording] = useState(false)
+  const [recordingTime, setRecordingTime] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const recordingTimerRef = useRef<NodeJS.Timeout | null>(null)
+  
+  const MAX_RECORDING_TIME = 300 // 5 minutes in seconds
 
   const step = QUIZ_STEPS[currentStep]
   const progress = ((currentStep) / (QUIZ_STEPS.length - 1)) * 100
@@ -201,7 +215,7 @@ export default function GetStartedPage() {
             name: answers.name,
             email: pendingEmail,
             role: Array.isArray(answers.roles) ? answers.roles.join(", ") : "",
-            visibility: answers.visibility || "",
+            visibility: Array.isArray(answers.visibility) ? answers.visibility.join(", ") : (answers.visibility || ""),
             topics: answers.topics || "",
             goals: answers.goals || "",
             city: answers.city || "",
@@ -258,6 +272,116 @@ export default function GetStartedPage() {
       handleNext()
     }
   }
+
+  // Voice recording with Web Speech API
+  const startRecording = () => {
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+      setError("Voice input is not supported in your browser. Try Chrome or Safari.")
+      return
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    const recognition = new SpeechRecognition()
+    
+    recognition.continuous = true
+    recognition.interimResults = true
+    recognition.lang = "en-US"
+    
+    recognition.onresult = (event) => {
+      let finalTranscript = inputValue
+      let interimTranscript = ""
+      
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript
+        if (event.results[i].isFinal) {
+          finalTranscript += (finalTranscript ? " " : "") + transcript
+        } else {
+          interimTranscript += transcript
+        }
+      }
+      
+      setInputValue(finalTranscript + interimTranscript)
+    }
+    
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error)
+      stopRecording()
+      if (event.error === "not-allowed") {
+        setError("Microphone access denied. Please allow microphone access and try again.")
+      }
+    }
+    
+    recognition.onend = () => {
+      if (isRecording) {
+        // Restart if still supposed to be recording (browser may stop it)
+        try {
+          recognition.start()
+        } catch {
+          stopRecording()
+        }
+      }
+    }
+    
+    try {
+      recognition.start()
+      recognitionRef.current = recognition
+      setIsRecording(true)
+      setRecordingTime(0)
+      
+      // Start timer
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingTime(prev => {
+          if (prev >= MAX_RECORDING_TIME - 1) {
+            stopRecording()
+            return MAX_RECORDING_TIME
+          }
+          return prev + 1
+        })
+      }, 1000)
+    } catch (err) {
+      console.error("Failed to start recording:", err)
+      setError("Failed to start voice input. Please try again.")
+    }
+  }
+
+  const stopRecording = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop()
+      recognitionRef.current = null
+    }
+    if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current)
+      recordingTimerRef.current = null
+    }
+    setIsRecording(false)
+    setRecordingTime(0)
+  }
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording()
+    } else {
+      startRecording()
+    }
+  }
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, "0")}`
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop()
+      }
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current)
+      }
+    }
+  }, [])
 
   // Completed state - show lineup
   if (isComplete) {
@@ -458,30 +582,59 @@ export default function GetStartedPage() {
                   </div>
                 )}
 
-                {/* Textarea input - larger, expandable */}
+                {/* Textarea input - larger, expandable with mic */}
                 {step.type === "textarea" && (
                   <div className="space-y-4">
-                    <textarea
-                      ref={textareaRef}
-                      value={inputValue}
-                      onChange={(e) => {
-                        setInputValue(e.target.value)
-                        // Auto-resize
-                        e.target.style.height = "auto"
-                        e.target.style.height = e.target.scrollHeight + "px"
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault()
-                          handleNext()
-                        }
-                      }}
-                      placeholder={step.placeholder}
-                      rows={3}
-                      className="w-full text-xl md:text-2xl bg-secondary/50 border-2 border-border focus:border-primary rounded-2xl outline-none p-5 text-white placeholder:text-muted-foreground/50 transition-colors resize-none min-h-[140px]"
-                      style={{ fontSize: "clamp(1.125rem, 3vw, 1.5rem)" }}
-                    />
-                    <p className="text-sm text-muted-foreground">Press Enter to continue, Shift+Enter for new line</p>
+                    <div className="relative">
+                      <textarea
+                        ref={textareaRef}
+                        value={inputValue}
+                        onChange={(e) => {
+                          setInputValue(e.target.value)
+                          // Auto-resize
+                          e.target.style.height = "auto"
+                          e.target.style.height = Math.max(180, e.target.scrollHeight) + "px"
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault()
+                            handleNext()
+                          }
+                        }}
+                        placeholder={step.placeholder}
+                        rows={4}
+                        className="w-full text-xl md:text-2xl bg-secondary/50 border-2 border-border focus:border-primary rounded-2xl outline-none p-5 pb-16 text-white placeholder:text-muted-foreground/50 transition-colors resize-none min-h-[180px]"
+                        style={{ fontSize: "clamp(1.125rem, 3vw, 1.5rem)" }}
+                      />
+                      {/* Mic button */}
+                      <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={toggleRecording}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all cursor-pointer ${
+                            isRecording 
+                              ? "bg-red-500 text-white animate-pulse" 
+                              : "bg-primary/20 text-primary hover:bg-primary/30"
+                          }`}
+                        >
+                          {isRecording ? (
+                            <>
+                              <MicOff className="w-5 h-5" />
+                              <span className="text-sm font-medium">Stop {formatTime(recordingTime)}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Mic className="w-5 h-5" />
+                              <span className="text-sm font-medium">Tap to speak</span>
+                            </>
+                          )}
+                        </button>
+                        <span className="text-xs text-muted-foreground">
+                          {isRecording ? `${formatTime(MAX_RECORDING_TIME - recordingTime)} left` : "5 min max"}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Speak naturally or type - press Enter to continue</p>
                   </div>
                 )}
 
