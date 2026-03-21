@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { ArrowRight, ArrowLeft, Check, Loader2, Sparkles, ExternalLink, Mail } from "lucide-react"
+import { ArrowRight, ArrowLeft, Check, Loader2, Sparkles, ExternalLink, Mail, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LogoMark } from "@/components/logo"
 import Link from "next/link"
@@ -17,7 +17,7 @@ interface Opportunity {
 
 interface QuizStep {
   id: string
-  type: "text" | "email" | "select" | "multiselect" | "verify"
+  type: "text" | "textarea" | "email" | "select" | "multiselect" | "confirm"
   question: string
   subtitle?: string
   placeholder?: string
@@ -30,7 +30,7 @@ const QUIZ_STEPS: QuizStep[] = [
     id: "name",
     type: "text",
     question: "First, what's your name?",
-    subtitle: "We'll use this to personalize your experience",
+    subtitle: "We'll use this to personalize your opportunities",
     placeholder: "Your first name",
     required: true
   },
@@ -68,34 +68,33 @@ const QUIZ_STEPS: QuizStep[] = [
   },
   {
     id: "topics",
-    type: "text",
+    type: "textarea",
     question: "What topics are you known for?",
     subtitle: "Or want to be known for",
-    placeholder: "e.g., AI, leadership, sustainability, comedy...",
+    placeholder: "AI, leadership, sustainability, comedy, fitness...",
     required: true
   },
   {
     id: "goals",
-    type: "text",
+    type: "textarea",
     question: "What's your big picture goal?",
     subtitle: "Where do you want this to take you?",
-    placeholder: "e.g., Land a TEDx talk, get published in Forbes...",
+    placeholder: "Land a TEDx talk, get published in Forbes, build my speaking business...",
     required: true
   },
   {
     id: "email",
     type: "email",
     question: "Where should we send your opportunities?",
-    subtitle: "We'll send a verification code to confirm",
+    subtitle: "We'll send your first 5 opportunities right away",
     placeholder: "you@example.com",
     required: true
   },
   {
-    id: "verify",
-    type: "verify",
-    question: "Enter the 6-digit code",
-    subtitle: "We just sent it to your email",
-    placeholder: "000000",
+    id: "confirm",
+    type: "confirm",
+    question: "Is this email correct?",
+    subtitle: "",
     required: true
   }
 ]
@@ -107,12 +106,12 @@ export default function GetStartedPage() {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const [verificationCode, setVerificationCode] = useState("")
-  const [actualCode, setActualCode] = useState("")
   const [isComplete, setIsComplete] = useState(false)
   const [lineup, setLineup] = useState<Opportunity[]>([])
   const [showPayment, setShowPayment] = useState(false)
+  const [pendingEmail, setPendingEmail] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const step = QUIZ_STEPS[currentStep]
   const progress = ((currentStep) / (QUIZ_STEPS.length - 1)) * 100
@@ -120,8 +119,10 @@ export default function GetStartedPage() {
 
   // Focus input when step changes
   useEffect(() => {
-    if (step?.type === "text" || step?.type === "email" || step?.type === "verify") {
+    if (step?.type === "text" || step?.type === "email") {
       setTimeout(() => inputRef.current?.focus(), 300)
+    } else if (step?.type === "textarea") {
+      setTimeout(() => textareaRef.current?.focus(), 300)
     }
   }, [currentStep, step?.type])
 
@@ -137,7 +138,7 @@ export default function GetStartedPage() {
 
     // Validate current step
     if (step.required) {
-      if (step.type === "text" || step.type === "email") {
+      if (step.type === "text" || step.type === "email" || step.type === "textarea") {
         if (!inputValue.trim()) {
           setError("This field is required")
           return
@@ -151,54 +152,26 @@ export default function GetStartedPage() {
         setError("Please select at least one option")
         return
       }
-      if (step.type === "verify") {
-        if (verificationCode.length !== 6) {
-          setError("Please enter the 6-digit code")
-          return
-        }
-        if (verificationCode !== actualCode) {
-          setError("Invalid code. Please try again.")
-          return
-        }
-      }
     }
 
     // Save answer
-    if (step.type === "text" || step.type === "email") {
+    if (step.type === "text" || step.type === "email" || step.type === "textarea") {
       setAnswers(prev => ({ ...prev, [step.id]: inputValue.trim() }))
     } else if (step.type === "multiselect") {
       setAnswers(prev => ({ ...prev, [step.id]: selectedOptions }))
     } else if (step.type === "select") {
       // Already saved on click
-    } else if (step.type === "verify") {
-      setAnswers(prev => ({ ...prev, [step.id]: verificationCode }))
     }
 
-    // Handle email verification step
+    // Handle email step - store email and move to confirmation
     if (step.type === "email") {
-      setIsLoading(true)
-      try {
-        const res = await fetch("/api/send-verification", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: inputValue.trim() })
-        })
-        const data = await res.json()
-        if (data.success) {
-          setActualCode(data.code) // In production, this would be stored server-side
-          setCurrentStep(prev => prev + 1)
-        } else {
-          setError(data.error || "Failed to send verification code")
-        }
-      } catch {
-        setError("Something went wrong. Please try again.")
-      }
-      setIsLoading(false)
+      setPendingEmail(inputValue.trim())
+      setCurrentStep(prev => prev + 1)
       return
     }
 
-    // Handle final verification step - submit everything
-    if (step.type === "verify") {
+    // Handle email confirmation - submit everything
+    if (step.type === "confirm") {
       setIsLoading(true)
       try {
         const res = await fetch("/api/signup", {
@@ -206,7 +179,7 @@ export default function GetStartedPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: answers.name,
-            email: answers.email,
+            email: pendingEmail,
             role: Array.isArray(answers.roles) ? answers.roles.join(", ") : "",
             visibility: answers.visibility || "",
             topics: answers.topics || "",
@@ -215,6 +188,7 @@ export default function GetStartedPage() {
         })
         const data = await res.json()
         if (data.success) {
+          setAnswers(prev => ({ ...prev, email: pendingEmail }))
           setLineup(data.opportunities || [])
           setIsComplete(true)
           setShowPayment(true)
@@ -462,25 +436,74 @@ export default function GetStartedPage() {
                   </div>
                 )}
 
-                {/* Verification code input */}
-                {step.type === "verify" && (
+                {/* Textarea input - larger, expandable */}
+                {step.type === "textarea" && (
                   <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-muted-foreground mb-4">
-                      <Mail className="w-5 h-5" />
-                      <span>Sent to {answers.email as string}</span>
-                    </div>
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      maxLength={6}
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ""))}
-                      onKeyDown={handleKeyDown}
-                      placeholder="000000"
-                      className="w-full text-4xl md:text-5xl bg-transparent border-b-2 border-border focus:border-primary outline-none py-4 text-white placeholder:text-muted-foreground/50 transition-colors tracking-[0.5em] text-center font-mono"
+                    <textarea
+                      ref={textareaRef}
+                      value={inputValue}
+                      onChange={(e) => {
+                        setInputValue(e.target.value)
+                        // Auto-resize
+                        e.target.style.height = "auto"
+                        e.target.style.height = e.target.scrollHeight + "px"
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault()
+                          handleNext()
+                        }
+                      }}
+                      placeholder={step.placeholder}
+                      rows={3}
+                      className="w-full text-xl md:text-2xl bg-secondary/50 border-2 border-border focus:border-primary rounded-2xl outline-none p-5 text-white placeholder:text-muted-foreground/50 transition-colors resize-none min-h-[140px]"
+                      style={{ fontSize: "clamp(1.125rem, 3vw, 1.5rem)" }}
                     />
+                    <p className="text-sm text-muted-foreground">Press Enter to continue, Shift+Enter for new line</p>
+                  </div>
+                )}
+
+                {/* Email confirmation */}
+                {step.type === "confirm" && (
+                  <div className="space-y-6">
+                    <div className="p-6 md:p-8 rounded-2xl bg-secondary/50 border-2 border-border">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Mail className="w-6 h-6 text-primary" />
+                        <span className="text-muted-foreground">Your email</span>
+                      </div>
+                      <p className="text-2xl md:text-3xl font-medium text-white break-all">
+                        {pendingEmail}
+                      </p>
+                    </div>
+                    <div className="flex gap-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setCurrentStep(prev => prev - 1)
+                          setInputValue(pendingEmail)
+                        }}
+                        className="flex-1 h-14 text-lg border-2 cursor-pointer"
+                      >
+                        Edit email
+                      </Button>
+                      <Button
+                        onClick={handleNext}
+                        disabled={isLoading}
+                        className="flex-1 h-14 text-lg gradient-brand text-white cursor-pointer"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                            Finding opportunities...
+                          </>
+                        ) : (
+                          <>
+                            Yes, show me my lineup!
+                            <ArrowRight className="w-5 h-5 ml-2" />
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 )}
 
@@ -559,39 +582,41 @@ export default function GetStartedPage() {
         </div>
       </main>
 
-      {/* Bottom navigation */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-background via-background to-transparent">
-        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
-          {/* Back button */}
-          <Button
-            variant="ghost"
-            onClick={handleBack}
-            disabled={currentStep === 0}
-            className={`h-14 px-6 text-lg cursor-pointer ${currentStep === 0 ? "invisible" : ""}`}
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back
-          </Button>
-
-          {/* Next/Submit button */}
-          {(step.type !== "select" || step.type === "multiselect") && (
+      {/* Bottom navigation - hide on confirm step since it has its own buttons */}
+      {step.type !== "confirm" && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-background via-background to-transparent">
+          <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
+            {/* Back button */}
             <Button
-              onClick={handleNext}
-              disabled={isLoading}
-              className="h-14 px-8 gradient-brand text-white font-semibold text-lg cursor-pointer min-w-[140px]"
+              variant="ghost"
+              onClick={handleBack}
+              disabled={currentStep === 0}
+              className={`h-14 px-6 text-lg cursor-pointer ${currentStep === 0 ? "invisible" : ""}`}
             >
-              {isLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  {step.type === "verify" ? "Verify & Continue" : step.type === "email" ? "Send Code" : "Continue"}
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </>
-              )}
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Back
             </Button>
-          )}
+
+            {/* Next/Submit button - hide on single select since it auto-advances */}
+            {step.type !== "select" && (
+              <Button
+                onClick={handleNext}
+                disabled={isLoading || (step.type === "multiselect" && selectedOptions.length === 0)}
+                className="h-14 px-8 gradient-brand text-white font-semibold text-lg cursor-pointer min-w-[140px]"
+              >
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    Continue
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
