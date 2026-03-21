@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { OnboardingData } from "@/lib/types"
-import { getSearchQueries, fetchSearchResults, dedupeResults } from "@/lib/search"
+import { getSearchQueries, fetchSearchResults } from "@/lib/search"
 import { generateEmail } from "@/lib/ai"
 import { sendEmail } from "@/lib/email"
 
@@ -61,8 +61,13 @@ interface Opportunity {
   title: string
   link: string
   type: string
+  category: string
   deadline?: string
+  description: string
   reason: string
+  action: string
+  venue?: string
+  date?: string
 }
 
 async function generateUserLineup(user: OnboardingData & { id: string }): Promise<Opportunity[]> {
@@ -83,18 +88,11 @@ async function generateUserLineup(user: OnboardingData & { id: string }): Promis
   // Generate search queries based on user profile
   const queries = getSearchQueries(userForSearch)
   
-  // Fetch results for each query
-  const allResults = []
-  for (const query of queries) {
-    const results = await fetchSearchResults(query)
-    allResults.push(...results)
-  }
-  
-  // Dedupe results
-  const uniqueResults = dedupeResults(allResults)
+  // Fetch all results in parallel (fast!)
+  const results = await fetchSearchResults(queries)
   
   // Generate personalized opportunities with AI
-  const emailContent = await generateEmail(userForSearch, uniqueResults)
+  const emailContent = await generateEmail(userForSearch, results)
   
   return emailContent.opportunities || []
 }

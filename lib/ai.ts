@@ -13,9 +13,14 @@ interface EmailContent {
   opportunities: Array<{
     title: string
     link: string
-    reason: string
-    type?: string
+    type: string
+    category: string
     deadline?: string
+    description: string
+    reason: string
+    action: string
+    venue?: string
+    date?: string
   }>
   body?: string
   greeting?: string
@@ -25,53 +30,68 @@ interface EmailContent {
 export async function generateEmail(user: ExtendedUser, opportunities: SearchResult[]): Promise<EmailContent> {
   const firstName = user.name?.split(" ")[0] || "there"
   
-  const prompt = `You're the voice of The Lineup — a friendly, encouraging assistant who helps multi-hyphenates find amazing opportunities.
+  const prompt = `You're curating SPECIFIC, ACTIONABLE opportunities for The Lineup. Not vague suggestions — real things with names, dates, and places.
 
 USER PROFILE:
-Name: ${firstName}
-What they do: ${user.role || user.interests}
-Looking for: ${user.visibility || "visibility opportunities"}
-Topics/expertise: ${user.topics || user.interests}
-Big goals: ${user.goals}
-Location: ${user.location || "Not specified"}
-Travel: ${user.travel || "Open to travel"}
+- Name: ${firstName}
+- What they do: ${user.role || user.interests}
+- Looking for: ${user.visibility || "visibility opportunities"}
+- Topics/expertise: ${user.topics || user.interests}
+- Goals: ${user.goals}
+- Location: ${user.location || "Not specified"}
+- Travel preference: ${user.travel || "Open to travel"}
 
 RAW SEARCH RESULTS:
 ${opportunities.map((opp, i) => `${i + 1}. "${opp.title}"
    URL: ${opp.link}
-   Description: ${opp.snippet}`).join("\n\n")}
+   Snippet: ${opp.snippet}`).join("\n\n")}
 
 YOUR JOB:
-Pick the 5 BEST opportunities from the search results that actually fit ${firstName}. Be picky — only include things that are:
-- Real opportunities (speaking gigs, podcast guest spots, publications accepting pitches, grants, brand collabs, etc.)
-- Relevant to what they do and their goals
-- Actually worth their time
+Extract the 5 MOST SPECIFIC opportunities. You MUST include:
+- Exact event/organization names (e.g., "Jersey City Comedy Festival" not "comedy festival")
+- Specific venues and cities when mentioned (e.g., "at Fordham Law" or "Javits Center")
+- Actual dates or deadlines (e.g., "June 11-13", "Deadline: April 10", "Rolling - Act fast")
+- What makes it unique (e.g., "Industry judges include Comedy Central" or "2,000+ NYC entrepreneurs")
 
-For each opportunity, write a CONVERSATIONAL reason (1-2 sentences) explaining why YOU think it's a good fit for THEM specifically. Sound like a friend who found something exciting, not a robot. Reference their actual goals and interests.
+REJECT opportunities that are:
+- Generic "how to" articles or listicles
+- Facebook groups or community forums
+- Vague "opportunities in [field]" posts
+- Job boards without specific listings
+- Outdated (more than 2 months old)
 
-Examples of good reasons:
-- "You mentioned wanting to get on more podcasts about tech — this one's specifically looking for founders to talk about AI, which is right in your wheelhouse."
-- "Since you're building toward a TEDx talk, this speaker submission could be great practice and visibility."
-- "This grant is literally for creatives doing exactly what you described — the $10k could fund your next project."
+For each opportunity, create:
+1. **title**: Specific event/opportunity name with date/location if available (e.g., "NYC Small Business Expo - May 7 at Javits Center")
+2. **category**: ALL CAPS topic tag (e.g., "TECH & STARTUPS", "COMEDY & MUSIC", "HEALTH & WELLNESS", "BUSINESS", "CREATIVE ARTS")
+3. **type**: The opportunity type (Speaking, Podcast, Byline, Grant, Pitch, Fellowship, Brand, Summit)
+4. **description**: 1-2 sentences with SPECIFIC details from the listing (judges, audience size, what they're looking for)
+5. **deadline**: Exact date or urgency ("April 10", "Rolling - Act fast", "Email this week")
+6. **venue**: Specific location if mentioned
+7. **date**: Event date if mentioned
+8. **action**: CTA verb ("Submit", "Apply", "Pitch", "Reach out", "Draft pitch")
+9. **reason**: One conversational sentence about why it fits THIS person
 
-Also write:
-1. A warm, casual greeting (2-3 sentences) — like a text from a friend who's excited to share good news. Use their name.
-2. A short signoff (1-2 sentences) — encouraging but genuine, not corporate.
-
-RESPOND IN JSON ONLY:
+EXAMPLE OUTPUT:
 {
   "opportunities": [
-    { 
-      "title": "Clean, readable title", 
-      "link": "exact URL from results", 
-      "type": "Speaking|Podcast|Byline|Grant|Brand|Fellowship|Other", 
-      "deadline": "if mentioned, otherwise null",
-      "reason": "Conversational reason why this fits them"
+    {
+      "title": "Jersey City Comedy Festival - Submissions Open Now",
+      "link": "https://...",
+      "type": "Speaking",
+      "category": "COMEDY & MUSIC",
+      "description": "JCCF is accepting stand-up submissions for June 11-13. Industry judges include Comedy Central, Stand-Up New York, and Catch a Rising Star.",
+      "deadline": "Rolling - Act fast",
+      "venue": "Jersey City",
+      "date": "June 11-13",
+      "action": "Submit",
+      "reason": "You mentioned comedy — this could get you in front of industry bookers."
     }
   ],
-  "greeting": "Your warm greeting...",
-  "signoff": "Your signoff..."
-}`
+  "greeting": "Hey ${firstName}! Found some specific opportunities that match what you're building...",
+  "signoff": "Go get 'em. — The Lineup"
+}
+
+RESPOND IN JSON ONLY:`
 
   try {
     // Use Vercel AI Gateway - no API key needed in v0
@@ -103,25 +123,41 @@ function generateFallbackContent(user: ExtendedUser, opportunities: SearchResult
   const firstName = user.name?.split(" ")[0] || "there"
   const mainInterest = user.topics || user.interests?.split(",")[0] || "your expertise"
   
-  // Try to infer types from titles/snippets
-  const inferType = (opp: SearchResult): string => {
+  // Infer type and category from content
+  const inferDetails = (opp: SearchResult): { type: string; category: string; action: string } => {
     const text = (opp.title + " " + opp.snippet).toLowerCase()
-    if (text.includes("speak") || text.includes("conference") || text.includes("summit")) return "Speaking"
-    if (text.includes("podcast") || text.includes("guest")) return "Podcast"
-    if (text.includes("grant") || text.includes("funding") || text.includes("fellowship")) return "Grant"
-    if (text.includes("publish") || text.includes("submit") || text.includes("contributor")) return "Byline"
-    if (text.includes("brand") || text.includes("ambassador") || text.includes("partner")) return "Brand"
-    return "Opportunity"
+    if (text.includes("speak") || text.includes("conference") || text.includes("summit")) {
+      return { type: "Speaking", category: "BUSINESS & EVENTS", action: "Apply" }
+    }
+    if (text.includes("podcast") || text.includes("guest")) {
+      return { type: "Podcast", category: "MEDIA", action: "Pitch" }
+    }
+    if (text.includes("grant") || text.includes("funding") || text.includes("fellowship")) {
+      return { type: "Grant", category: "FUNDING", action: "Apply" }
+    }
+    if (text.includes("publish") || text.includes("submit") || text.includes("contributor")) {
+      return { type: "Byline", category: "PUBLISHING", action: "Submit" }
+    }
+    if (text.includes("brand") || text.includes("ambassador") || text.includes("partner")) {
+      return { type: "Brand", category: "PARTNERSHIPS", action: "Reach out" }
+    }
+    return { type: "Opportunity", category: "GENERAL", action: "Check it out" }
   }
   
   return {
-    opportunities: opportunities.slice(0, 5).map((opp) => ({
-      title: opp.title,
-      link: opp.link,
-      type: inferType(opp),
-      reason: `This came up when I searched for ${mainInterest} opportunities — looks like it could be a solid fit for what you're building toward.`
-    })),
-    greeting: `Hey ${firstName}!\n\nI just finished digging through a ton of opportunities and pulled out 5 that I think are actually worth your time. These are matched to what you told me about your goals in ${mainInterest}.`,
-    signoff: `That's your lineup for this week. Let me know how it goes — I'm always looking for the next one for you.\n\n— The Lineup`
+    opportunities: opportunities.slice(0, 5).map((opp) => {
+      const details = inferDetails(opp)
+      return {
+        title: opp.title,
+        link: opp.link,
+        type: details.type,
+        category: details.category,
+        description: opp.snippet.slice(0, 150) + (opp.snippet.length > 150 ? "..." : ""),
+        action: details.action,
+        reason: `This came up when I searched for ${mainInterest} opportunities.`
+      }
+    }),
+    greeting: `Hey ${firstName}!\n\nHere are 5 opportunities I found that match what you're building.`,
+    signoff: `Go get 'em. — The Lineup`
   }
 }

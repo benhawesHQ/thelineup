@@ -26,8 +26,13 @@ export interface Opportunity {
   title: string
   link: string
   type: string
+  category: string // e.g., "COMEDY & MUSIC", "TECH & STARTUPS", "HEALTH & WELLNESS"
   deadline?: string
-  reason: string
+  description: string // Specific details about the opportunity
+  reason: string // Why it's a fit
+  action: string // "Submit", "Apply", "Pitch", "Reach out"
+  venue?: string // Location/venue if applicable
+  date?: string // Event date if applicable
 }
 
 export interface LineupEmail {

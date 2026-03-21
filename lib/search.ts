@@ -2,170 +2,195 @@ import { User, SearchResult } from "./types"
 
 interface ExtendedUser extends User {
   travel?: string
+  topics?: string
+  visibility?: string
+  role?: string
+}
+
+// Extract specific keywords from user's free-text responses
+export function extractKeywords(text: string): string[] {
+  const keywords: string[] = []
+  const lower = text.toLowerCase()
+  
+  // Business types - be specific
+  const businessTypes = [
+    "photo booth", "photography", "videography", "event planning", "catering",
+    "real estate", "tech startup", "saas", "e-commerce", "consulting",
+    "coaching", "fitness", "wellness", "health", "beauty", "fashion",
+    "music", "podcast", "content creation", "marketing", "pr", "design",
+    "architecture", "law", "finance", "investing", "crypto", "ai", "machine learning",
+    "education", "nonprofit", "social impact", "sustainability", "climate"
+  ]
+  
+  // Industry-specific terms
+  const industries = [
+    "entrepreneurship", "leadership", "innovation", "technology", "creative",
+    "entertainment", "media", "sports", "arts", "culture", "food", "travel",
+    "parenting", "relationships", "mental health", "personal development"
+  ]
+  
+  // Specific goals
+  const goalTerms = [
+    "tedx", "ted talk", "keynote", "book deal", "forbes", "entrepreneur magazine",
+    "inc magazine", "fast company", "new york times", "wall street journal",
+    "speaking circuit", "thought leader", "industry expert", "brand ambassador"
+  ]
+  
+  // Check for matches
+  businessTypes.forEach(term => {
+    if (lower.includes(term)) keywords.push(term)
+  })
+  
+  industries.forEach(term => {
+    if (lower.includes(term)) keywords.push(term)
+  })
+  
+  goalTerms.forEach(term => {
+    if (lower.includes(term)) keywords.push(term)
+  })
+  
+  return [...new Set(keywords)]
 }
 
 export function getSearchQueries(user: ExtendedUser): string[] {
   const { location, interests, goals, travel } = user
-  const interestList = interests.split(",").map(i => i.trim()).filter(Boolean)
   
-  // Parse visibility types from interests (they're combined)
-  const visibilityKeywords = ["speaking", "podcast", "published", "brand", "grants", "funding"]
-  const topics = interestList.filter(i => !visibilityKeywords.some(v => i.toLowerCase().includes(v)))
-  const visibility = interestList.filter(i => visibilityKeywords.some(v => i.toLowerCase().includes(v)))
+  // Extract specific keywords from their responses
+  const topicKeywords = extractKeywords(user.topics || interests || "")
+  const goalKeywords = extractKeywords(goals || "")
+  const allKeywords = [...new Set([...topicKeywords, ...goalKeywords])]
+  
+  // Parse visibility types
+  const visibilityTypes = (user.visibility || interests || "").toLowerCase()
+  const wantsSpeaking = visibilityTypes.includes("speaking")
+  const wantsPodcasts = visibilityTypes.includes("podcast")
+  const wantsPublishing = visibilityTypes.includes("publish")
+  const wantsBrand = visibilityTypes.includes("brand")
+  const wantsGrants = visibilityTypes.includes("grant") || visibilityTypes.includes("funding")
   
   const queries: string[] = []
   const currentYear = new Date().getFullYear()
   
-  // Location modifier based on travel preference
-  const locationMod = travel?.includes("Online") ? "virtual OR remote OR online" : 
-                      travel?.includes("country") ? `${location} OR USA OR "United States"` : 
-                      ""
+  // Location handling
+  const city = location || "New York"
+  const isLocalOnly = travel?.includes("local") || travel?.includes("Online")
   
-  // Speaking opportunities
-  if (visibility.some(v => v.toLowerCase().includes("speaking")) || interests.toLowerCase().includes("speaker")) {
-    queries.push(`call for speakers ${currentYear} ${topics.slice(0, 2).join(" ")} ${locationMod}`.trim())
-    queries.push(`speaking opportunities conferences ${topics[0] || ""} ${currentYear}`.trim())
-    queries.push(`TEDx auditions open ${currentYear} ${location}`.trim())
-  }
-  
-  // Podcast opportunities
-  if (visibility.some(v => v.toLowerCase().includes("podcast")) || interests.toLowerCase().includes("podcast")) {
-    queries.push(`podcasts looking for guests ${topics.slice(0, 2).join(" ")} ${currentYear}`.trim())
-    queries.push(`be a podcast guest ${topics[0] || ""} submit`.trim())
-  }
-  
-  // Publishing opportunities  
-  if (visibility.some(v => v.toLowerCase().includes("publish")) || interests.toLowerCase().includes("writer")) {
-    queries.push(`call for submissions ${topics[0] || ""} ${currentYear}`.trim())
-    queries.push(`guest post opportunities ${topics.slice(0, 2).join(" ")}`.trim())
-    queries.push(`contributor guidelines ${topics[0] || ""} publications`.trim())
-  }
-  
-  // Brand partnerships
-  if (visibility.some(v => v.toLowerCase().includes("brand"))) {
-    queries.push(`brand ambassador programs ${topics[0] || ""} ${currentYear}`.trim())
-    queries.push(`influencer partnerships ${topics.slice(0, 2).join(" ")} apply`.trim())
-  }
-  
-  // Grants and funding
-  if (visibility.some(v => v.toLowerCase().includes("grant") || v.toLowerCase().includes("funding"))) {
-    queries.push(`grants for ${topics[0] || "creatives"} ${currentYear} applications open`.trim())
-    queries.push(`fellowship programs ${topics.slice(0, 2).join(" ")} ${currentYear}`.trim())
-    queries.push(`funding opportunities ${topics[0] || ""} artists creators`.trim())
-  }
-  
-  // Add goal-specific searches
-  if (goals) {
-    queries.push(`${goals} opportunities apply ${currentYear}`.trim())
-  }
-  
-  // Add topic-specific opportunities
-  topics.slice(0, 2).forEach(topic => {
-    queries.push(`${topic} opportunities ${currentYear} apply now`.trim())
+  // SPECIFIC queries based on extracted keywords
+  allKeywords.slice(0, 3).forEach(keyword => {
+    if (wantsSpeaking) {
+      // Very specific conference searches
+      queries.push(`"call for speakers" "${keyword}" ${currentYear}`)
+      queries.push(`${keyword} conference speaker applications ${currentYear}`)
+      queries.push(`"seeking speakers" ${keyword} summit ${currentYear}`)
+    }
+    
+    if (wantsPodcasts) {
+      queries.push(`${keyword} podcast "looking for guests" ${currentYear}`)
+      queries.push(`"be a guest" ${keyword} podcast`)
+    }
+    
+    if (wantsPublishing) {
+      queries.push(`${keyword} "contributor guidelines" "pitch us"`)
+      queries.push(`${keyword} publication "submit" "guest post"`)
+    }
+    
+    if (wantsBrand) {
+      queries.push(`${keyword} "brand ambassador" application ${currentYear}`)
+      queries.push(`${keyword} sponsorship opportunities creators`)
+    }
+    
+    if (wantsGrants) {
+      queries.push(`grants "${keyword}" ${currentYear} "applications open"`)
+      queries.push(`${keyword} fellowship program ${currentYear}`)
+    }
   })
+  
+  // Location-specific queries
+  if (!isLocalOnly && city) {
+    queries.push(`"call for speakers" ${city} ${currentYear}`)
+    queries.push(`${city} conferences accepting speakers ${currentYear}`)
+  }
+  
+  // TEDx specific if mentioned in goals
+  if (goals?.toLowerCase().includes("ted") || goals?.toLowerCase().includes("tedx")) {
+    queries.push(`TEDx "open call" speakers ${currentYear}`)
+    queries.push(`TEDx auditions applications ${city} ${currentYear}`)
+  }
+  
+  // University/academic speaking if relevant
+  if (allKeywords.some(k => ["entrepreneurship", "leadership", "tech", "ai", "innovation"].includes(k))) {
+    queries.push(`university "guest speaker" ${allKeywords[0] || "entrepreneurship"} ${currentYear}`)
+    queries.push(`"looking for speakers" college ${allKeywords[0] || ""} ${currentYear}`)
+  }
   
   // Dedupe and limit
   const uniqueQueries = [...new Set(queries.filter(q => q.length > 10))]
-  return uniqueQueries.slice(0, 8) // Use up to 8 queries for variety
+  return uniqueQueries.slice(0, 10) // Use up to 10 queries for variety
 }
 
-export async function fetchSearchResults(query: string): Promise<SearchResult[]> {
+// Single search query
+async function fetchSingleQuery(query: string, apiKey: string): Promise<SearchResult[]> {
+  const url = new URL("https://serpapi.com/search")
+  url.searchParams.set("q", query)
+  url.searchParams.set("api_key", apiKey)
+  url.searchParams.set("engine", "google")
+  url.searchParams.set("num", "5") // Only need 5 per query
+
+  const response = await fetch(url.toString())
+  
+  if (!response.ok) {
+    console.error(`SerpAPI error for "${query}":`, response.status)
+    return []
+  }
+  
+  const data = await response.json()
+  
+  return (data.organic_results || []).map((result: { title?: string; link?: string; snippet?: string }) => ({
+    title: result.title || "",
+    link: result.link || "",
+    snippet: result.snippet || ""
+  }))
+}
+
+// Run multiple searches in parallel for speed
+export async function fetchSearchResults(queries: string[]): Promise<SearchResult[]> {
   const apiKey = process.env.SERP_API_KEY
   
   if (!apiKey) {
-    console.warn("SERP_API_KEY not set, using mock data")
-    return getMockResults(query)
+    throw new Error("SERP_API_KEY is not configured. Please add it in Settings > Vars.")
   }
   
-  try {
-    const url = new URL("https://serpapi.com/search")
-    url.searchParams.set("q", query)
-    url.searchParams.set("api_key", apiKey)
-    url.searchParams.set("engine", "google")
-    url.searchParams.set("num", "10")
-    
-    const response = await fetch(url.toString())
-    
-    if (!response.ok) {
-      console.error("SerpAPI error:", response.status)
-      return getMockResults(query)
-    }
-    
-    const data = await response.json()
-    
-    return (data.organic_results || []).map((result: { title?: string; link?: string; snippet?: string }) => ({
-      title: result.title || "",
-      link: result.link || "",
-      snippet: result.snippet || ""
-    }))
-  } catch (error) {
-    console.error("Search error:", error)
-    return getMockResults(query)
-  }
+  // Run all queries in parallel
+  const results = await Promise.all(
+    queries.slice(0, 5).map(query => fetchSingleQuery(query, apiKey))
+  )
+  
+  // Flatten and dedupe
+  const allResults = results.flat()
+  return dedupeResults(allResults)
 }
 
 export function dedupeResults(results: SearchResult[]): SearchResult[] {
   const seen = new Set<string>()
   return results.filter(result => {
-    if (seen.has(result.link)) {
-      return false
-    }
+    // Skip if no link or already seen
+    if (!result.link || seen.has(result.link)) return false
+    
+    // Skip generic/bad results
+    const lower = (result.title + result.snippet).toLowerCase()
+    const skipPatterns = [
+      "facebook.com/groups",
+      "linkedin.com/posts",
+      "reddit.com",
+      "quora.com",
+      "how to become",
+      "tips for",
+      "10 ways to",
+      "complete guide"
+    ]
+    if (skipPatterns.some(p => lower.includes(p))) return false
+    
     seen.add(result.link)
     return true
   })
-}
-
-function getMockResults(query: string): SearchResult[] {
-  // Mock results for development/demo
-  const mockData: SearchResult[] = [
-    {
-      title: "Junior Designer Position - Creative Agency",
-      link: "https://example.com/job-1",
-      snippet: "Looking for a creative designer to join our growing team. Remote-friendly, competitive salary."
-    },
-    {
-      title: "Tech Innovation Grant - $50,000",
-      link: "https://example.com/grant-1",
-      snippet: "Apply for our annual innovation grant. Open to projects in tech, design, and sustainability."
-    },
-    {
-      title: "Marketing Fellowship Program 2024",
-      link: "https://example.com/fellowship-1",
-      snippet: "6-month paid fellowship for emerging marketers. Mentorship and networking included."
-    },
-    {
-      title: "Startup Accelerator Applications Open",
-      link: "https://example.com/accelerator-1",
-      snippet: "Join our accelerator program. $100k investment, 3 months of intensive mentorship."
-    },
-    {
-      title: "Remote Content Writer - SaaS Company",
-      link: "https://example.com/job-2",
-      snippet: "We're hiring content writers who can craft compelling stories. Work from anywhere."
-    },
-    {
-      title: "Creative Arts Scholarship",
-      link: "https://example.com/scholarship-1",
-      snippet: "Full scholarship for creative professionals. Covers tuition, materials, and living expenses."
-    },
-    {
-      title: "Product Manager Opportunity",
-      link: "https://example.com/job-3",
-      snippet: "Join a fast-growing startup as Product Manager. Lead innovative projects."
-    },
-    {
-      title: "Social Impact Grant Program",
-      link: "https://example.com/grant-2",
-      snippet: "Funding for projects that create positive social change. Up to $25,000 available."
-    }
-  ]
-  
-  // Return results that match the query keywords
-  const keywords = query.toLowerCase().split(" ")
-  return mockData.filter(result => 
-    keywords.some(keyword => 
-      result.title.toLowerCase().includes(keyword) || 
-      result.snippet.toLowerCase().includes(keyword)
-    )
-  ).slice(0, 5)
 }
