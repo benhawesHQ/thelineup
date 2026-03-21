@@ -6,6 +6,8 @@ export interface User {
   visibility: string
   topics: string
   goals: string
+  city: string
+  travel: string
   createdAt: string
   // Subscription fields
   status: "free_trial" | "active" | "cancelled" | "expired"
@@ -40,9 +42,12 @@ export interface ChatMessage {
 }
 
 export interface OnboardingData {
+  name: string
   role: string
   visibility: string
   topics: string
   goals: string
+  city: string
+  travel: string
   email: string
 }

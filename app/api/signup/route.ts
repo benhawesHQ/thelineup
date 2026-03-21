@@ -11,7 +11,7 @@ const users = new Map<string, OnboardingData & { id: string; createdAt: string }
 export async function POST(request: Request) {
   try {
     const body: OnboardingData = await request.json()
-    const { role, visibility, topics, goals, email } = body
+    const { name, role, visibility, topics, goals, city, travel, email } = body
 
     // Validate input
     if (!email || !role) {
@@ -69,9 +69,10 @@ async function generateUserLineup(user: OnboardingData & { id: string }): Promis
   // Create a user object compatible with existing functions
   const userForSearch = {
     id: user.id,
-    name: user.email.split("@")[0],
+    name: user.name || user.email.split("@")[0],
     email: user.email,
-    location: "US",
+    location: user.city || "US",
+    travel: user.travel || "Yes, I'll travel anywhere",
     interests: `${user.role}, ${user.visibility}, ${user.topics}`,
     goals: user.goals,
     createdAt: new Date().toISOString(),
@@ -101,14 +102,15 @@ async function generateUserLineup(user: OnboardingData & { id: string }): Promis
 async function sendUserEmail(user: OnboardingData & { id: string }, opportunities: Opportunity[]) {
   const userForEmail = {
     id: user.id,
-    name: user.email.split("@")[0],
+    name: user.name || user.email.split("@")[0],
     email: user.email,
-    location: "US",
+    location: user.city || "US",
+    travel: user.travel || "Yes, I'll travel anywhere",
     interests: `${user.role}, ${user.visibility}, ${user.topics}`,
     goals: user.goals,
     createdAt: new Date().toISOString(),
     status: "free_trial" as const,
-    trialEndsAt: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString()
+    trialEndsAt: new Date(Date.now() + 28 * 24 + 60 * 60 * 1000).toISOString()
   }
   
   await sendEmail(userForEmail, {
