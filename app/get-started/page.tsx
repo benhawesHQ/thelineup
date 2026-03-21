@@ -308,7 +308,7 @@ export default function GetStartedPage() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <LogoMark size={32} />
             <span className="font-bold text-white">The Lineup</span>
@@ -322,19 +322,19 @@ export default function GetStartedPage() {
 
       {/* Messages */}
       <main className="flex-1 pt-20 pb-32 overflow-y-auto">
-        <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+        <div className="w-full max-w-4xl mx-auto px-4 md:px-8 py-6 space-y-6">
           {messages.map((message) => (
             <div 
               key={message.id} 
               className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              <div className={`max-w-[85%] ${message.role === "user" ? "" : "flex gap-3"}`}>
+              <div className={`max-w-[85%] md:max-w-[70%] ${message.role === "user" ? "" : "flex gap-3 w-full md:w-auto"}`}>
                 {message.role === "assistant" && (
                   <div className="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shrink-0 mt-1">
                     <LogoMark size={20} />
                   </div>
                 )}
-                <div>
+                <div className="w-full">
                   <div className={`rounded-2xl px-5 py-4 ${
                     message.role === "user" 
                       ? "bg-primary text-primary-foreground rounded-br-md" 
@@ -414,7 +414,7 @@ export default function GetStartedPage() {
 
       {/* Fixed Input */}
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 pb-safe">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto px-4 md:px-8">
           <div className="flex gap-3 items-end">
             <div className="flex-1 relative">
               <textarea
@@ -422,7 +422,7 @@ export default function GetStartedPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={step === 4 ? "your@email.com" : "Type or tap mic to talk..."}
+                placeholder={step === 6 ? "your@email.com" : "Type or tap mic to talk..."}
                 disabled={showPayment}
                 rows={1}
                 className="w-full min-h-[52px] max-h-32 px-5 py-3.5 pr-14 bg-secondary border border-border rounded-2xl text-white placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none text-base"
