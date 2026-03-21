@@ -19,8 +19,13 @@ interface Opportunity {
   title: string
   link: string
   type: string
+  category: string
   deadline?: string
+  description: string
   reason: string
+  action: string
+  venue?: string
+  date?: string
 }
 
 interface QuizStep {
@@ -418,46 +423,76 @@ export default function GetStartedPage() {
             {/* Lineup */}
             {lineup.length > 0 && (
               <div className="space-y-4 mb-12">
-                <div className="flex items-center gap-3 mb-6">
-                  <Sparkles className="w-6 h-6 text-primary" />
-                  <h2 className="text-xl font-bold text-white">Your First 5 Opportunities</h2>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="w-6 h-6 text-primary" />
+                    <h2 className="text-xl font-bold text-white">Your Lineup</h2>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                  </span>
                 </div>
                 
                 {lineup.map((opp, idx) => (
-                  <motion.a
+                  <motion.div
                     key={idx}
-                    href={opp.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="block p-6 rounded-2xl bg-secondary/80 border border-border hover:border-primary/50 transition-all group"
+                    className="rounded-2xl bg-[#FFFDF5] border-l-4 border-l-primary overflow-hidden"
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center shrink-0 text-white font-bold text-lg">
-                        {idx + 1}
+                    <div className="p-5 md:p-6">
+                      {/* Header row */}
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs font-semibold tracking-widest text-muted-foreground">
+                          {String(idx + 1).padStart(2, '0')} — {opp.type?.toUpperCase() || 'OPPORTUNITY'}
+                        </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-semibold uppercase tracking-wide text-primary">{opp.type}</span>
+                      
+                      {/* Category tag */}
+                      <div className="mb-3">
+                        <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-secondary text-foreground">
+                          {opp.category || 'GENERAL'}
+                        </span>
+                      </div>
+                      
+                      {/* Title */}
+                      <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 leading-tight">
+                        {opp.title}
+                      </h3>
+                      
+                      {/* Description */}
+                      <p className="text-sm md:text-base text-muted-foreground mb-4 leading-relaxed">
+                        {opp.description || opp.reason}
+                      </p>
+                      
+                      {/* Footer row */}
+                      <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                        <div className="text-sm">
                           {opp.deadline && (
-                            <span className="text-xs text-muted-foreground">Deadline: {opp.deadline}</span>
+                            <span className="text-foreground">
+                              <span className="text-muted-foreground">Deadline:</span>{' '}
+                              <span className="font-semibold">{opp.deadline}</span>
+                            </span>
+                          )}
+                          {!opp.deadline && opp.date && (
+                            <span className="text-foreground font-semibold">{opp.date}</span>
+                          )}
+                          {!opp.deadline && !opp.date && (
+                            <span className="text-muted-foreground">Open</span>
                           )}
                         </div>
-                        <h3 className="text-white font-semibold text-lg group-hover:text-primary transition-colors">
-                          {opp.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-2 italic">
-                          "{opp.reason}"
-                        </p>
-                        <div className="flex items-center gap-1 mt-3 text-sm text-primary font-medium">
-                          <span>View opportunity</span>
-                          <ExternalLink className="w-4 h-4" />
-                        </div>
+                        <a
+                          href={opp.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-sm font-semibold text-foreground hover:text-primary transition-colors cursor-pointer"
+                        >
+                          {opp.action || 'View'} <span className="text-lg">→</span>
+                        </a>
                       </div>
                     </div>
-                  </motion.a>
+                  </motion.div>
                 ))}
               </div>
             )}
