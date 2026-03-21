@@ -1,25 +1,72 @@
 import { User, SearchResult } from "./types"
 
-export function getSearchQueries(user: User): string[] {
-  const { location, interests, goals } = user
+interface ExtendedUser extends User {
+  travel?: string
+}
+
+export function getSearchQueries(user: ExtendedUser): string[] {
+  const { location, interests, goals, travel } = user
   const interestList = interests.split(",").map(i => i.trim()).filter(Boolean)
   
+  // Parse visibility types from interests (they're combined)
+  const visibilityKeywords = ["speaking", "podcast", "published", "brand", "grants", "funding"]
+  const topics = interestList.filter(i => !visibilityKeywords.some(v => i.toLowerCase().includes(v)))
+  const visibility = interestList.filter(i => visibilityKeywords.some(v => i.toLowerCase().includes(v)))
+  
   const queries: string[] = []
+  const currentYear = new Date().getFullYear()
   
-  // Generate varied search queries based on user profile
-  queries.push(`${goals} opportunities ${location}`)
-  queries.push(`${interests} jobs hiring ${location}`)
-  queries.push(`${interests} grants applications open 2024`)
-  queries.push(`${interests} scholarships ${location}`)
-  queries.push(`${interests} fellowship programs`)
-  queries.push(`${goals} remote opportunities`)
+  // Location modifier based on travel preference
+  const locationMod = travel?.includes("Online") ? "virtual OR remote OR online" : 
+                      travel?.includes("country") ? `${location} OR USA OR "United States"` : 
+                      ""
   
-  // Add specific queries for each interest
-  interestList.slice(0, 3).forEach(interest => {
-    queries.push(`${interest} career opportunities ${location}`)
+  // Speaking opportunities
+  if (visibility.some(v => v.toLowerCase().includes("speaking")) || interests.toLowerCase().includes("speaker")) {
+    queries.push(`call for speakers ${currentYear} ${topics.slice(0, 2).join(" ")} ${locationMod}`.trim())
+    queries.push(`speaking opportunities conferences ${topics[0] || ""} ${currentYear}`.trim())
+    queries.push(`TEDx auditions open ${currentYear} ${location}`.trim())
+  }
+  
+  // Podcast opportunities
+  if (visibility.some(v => v.toLowerCase().includes("podcast")) || interests.toLowerCase().includes("podcast")) {
+    queries.push(`podcasts looking for guests ${topics.slice(0, 2).join(" ")} ${currentYear}`.trim())
+    queries.push(`be a podcast guest ${topics[0] || ""} submit`.trim())
+  }
+  
+  // Publishing opportunities  
+  if (visibility.some(v => v.toLowerCase().includes("publish")) || interests.toLowerCase().includes("writer")) {
+    queries.push(`call for submissions ${topics[0] || ""} ${currentYear}`.trim())
+    queries.push(`guest post opportunities ${topics.slice(0, 2).join(" ")}`.trim())
+    queries.push(`contributor guidelines ${topics[0] || ""} publications`.trim())
+  }
+  
+  // Brand partnerships
+  if (visibility.some(v => v.toLowerCase().includes("brand"))) {
+    queries.push(`brand ambassador programs ${topics[0] || ""} ${currentYear}`.trim())
+    queries.push(`influencer partnerships ${topics.slice(0, 2).join(" ")} apply`.trim())
+  }
+  
+  // Grants and funding
+  if (visibility.some(v => v.toLowerCase().includes("grant") || v.toLowerCase().includes("funding"))) {
+    queries.push(`grants for ${topics[0] || "creatives"} ${currentYear} applications open`.trim())
+    queries.push(`fellowship programs ${topics.slice(0, 2).join(" ")} ${currentYear}`.trim())
+    queries.push(`funding opportunities ${topics[0] || ""} artists creators`.trim())
+  }
+  
+  // Add goal-specific searches
+  if (goals) {
+    queries.push(`${goals} opportunities apply ${currentYear}`.trim())
+  }
+  
+  // Add topic-specific opportunities
+  topics.slice(0, 2).forEach(topic => {
+    queries.push(`${topic} opportunities ${currentYear} apply now`.trim())
   })
   
-  return queries.slice(0, 6) // Limit to 6 queries
+  // Dedupe and limit
+  const uniqueQueries = [...new Set(queries.filter(q => q.length > 10))]
+  return uniqueQueries.slice(0, 8) // Use up to 8 queries for variety
 }
 
 export async function fetchSearchResults(query: string): Promise<SearchResult[]> {
