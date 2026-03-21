@@ -81,9 +81,10 @@ export function Footer() {
           </p>
           
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <a href="/support" className="hover:text-white transition-colors">Help & FAQ</a>
             <a href="#" className="hover:text-white transition-colors">Privacy</a>
             <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="mailto:hello@thelineup.app" className="hover:text-white transition-colors">Contact</a>
+            <a href="mailto:benjhawes@gmail.com" className="hover:text-white transition-colors">Contact</a>
           </div>
         </div>
       </div>
