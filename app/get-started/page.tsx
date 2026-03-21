@@ -83,10 +83,30 @@ const QUIZ_STEPS: QuizStep[] = [
     required: true
   },
   {
+    id: "city",
+    type: "text",
+    question: "What city are you based in?",
+    subtitle: "So we can find opportunities near you",
+    placeholder: "New York, Los Angeles, London...",
+    required: true
+  },
+  {
+    id: "travel",
+    type: "select",
+    question: "Are you open to traveling for opportunities?",
+    subtitle: "This helps us know what to send you",
+    options: [
+      "Yes, I'll travel anywhere",
+      "Within my country only",
+      "Online or local only"
+    ],
+    required: true
+  },
+  {
     id: "email",
     type: "email",
-    question: "Where should we send your opportunities?",
-    subtitle: "We'll send your first 5 opportunities right away",
+    question: "Last one! Where should we send your opportunities?",
+    subtitle: "We'll send your first 5 right away",
     placeholder: "you@example.com",
     required: true
   },
@@ -183,7 +203,9 @@ export default function GetStartedPage() {
             role: Array.isArray(answers.roles) ? answers.roles.join(", ") : "",
             visibility: answers.visibility || "",
             topics: answers.topics || "",
-            goals: answers.goals || ""
+            goals: answers.goals || "",
+            city: answers.city || "",
+            travel: answers.travel || ""
           })
         })
         const data = await res.json()
