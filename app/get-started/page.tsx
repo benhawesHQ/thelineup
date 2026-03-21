@@ -19,13 +19,18 @@ interface Message {
   role: "assistant" | "user"
   content: string
   options?: string[]
+  inputType?: "text" | "email" | "name" // For showing form inputs instead of chat
+  inputLabel?: string
+  inputPlaceholder?: string
 }
 
 const INITIAL_MESSAGE: Message = {
   id: "1",
   role: "assistant",
-  content: "Hey! So glad you're here. I'm going to ask you a few quick questions so I can find opportunities that are actually perfect for YOU.\n\nFirst things first — what's your name?",
-  options: []
+  content: "Hey! So glad you're here. I'm going to ask you a few quick questions so I can find opportunities that are actually perfect for YOU.",
+  inputType: "name",
+  inputLabel: "First name",
+  inputPlaceholder: "Enter your first name"
 }
 
 export default function GetStartedPage() {
@@ -44,6 +49,8 @@ export default function GetStartedPage() {
   const [pendingEmail, setPendingEmail] = useState("")
   const [awaitingEmailConfirm, setAwaitingEmailConfirm] = useState(false)
   const [showLineupOnly, setShowLineupOnly] = useState(false)
+  const [formInputValue, setFormInputValue] = useState("")
+  const [currentInputType, setCurrentInputType] = useState<"name" | "email" | "text" | null>("name")
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const recognitionRef = useRef<SpeechRecognition | null>(null)
@@ -125,8 +132,11 @@ export default function GetStartedPage() {
       options: []
     },
     {
-      question: "I've got some amazing stuff lined up for you already. Drop your email and I'll show you your first 5 opportunities right now — plus send them to your inbox!",
-      options: []
+      question: "I've got some amazing stuff lined up for you already!",
+      options: [],
+      inputType: "email" as const,
+      inputLabel: "Email address",
+      inputPlaceholder: "you@example.com"
     }
   ]
 
@@ -205,10 +215,11 @@ export default function GetStartedPage() {
     // Handle email confirmation step
     if (awaitingEmailConfirm) {
       const answer = content.trim().toLowerCase()
-      if (answer === "yes" || answer === "y" || answer === "yep" || answer === "yeah" || answer === "correct" || answer === "that's right") {
+      if (answer === "yes" || answer === "y" || answer === "yep" || answer === "yeah" || answer === "correct" || answer === "that's right" || answer.includes("yes")) {
         // Confirmed! Process signup
         setEmail(pendingEmail)
         setAwaitingEmailConfirm(false)
+        setCurrentInputType(null)
         setIsTyping(true)
         setIsLoadingLineup(true)
         
@@ -280,11 +291,13 @@ export default function GetStartedPage() {
       }
     }
 
-    // Step 0: Name
+    // Step 0: Name (comes from form input)
     if (step === 0) {
-      const name = content.trim().split(" ")[0] // Get first name
+      const name = content.trim()
       setUserName(name)
-      setUserData(prev => ({ ...prev, name: content.trim() }))
+      setUserData(prev => ({ ...prev, name }))
+      setCurrentInputType(null) // Clear form input
+      setFormInputValue("")
       
       setIsTyping(true)
       await new Promise(r => setTimeout(r, 800))
@@ -306,12 +319,15 @@ export default function GetStartedPage() {
     const stepKeys = ["", "role", "visibility", "topics", "goals", "email"]
     setUserData(prev => ({ ...prev, [stepKeys[step]]: content.trim() }))
 
-    // Check if this is the email step (step 5)
+    // Check if this is the email step (step 5) - now uses form input
     if (step === 5) {
-      if (content.includes("@") && content.includes(".")) {
-        // Ask for confirmation
-        setPendingEmail(content.trim())
+      const emailValue = content.trim()
+      if (emailValue.includes("@") && emailValue.includes(".")) {
+        // Valid email from form - confirm it
+        setPendingEmail(emailValue)
         setAwaitingEmailConfirm(true)
+        setCurrentInputType(null)
+        setFormInputValue("")
         
         setIsTyping(true)
         await new Promise(r => setTimeout(r, 600))
@@ -320,19 +336,23 @@ export default function GetStartedPage() {
         const confirmMessage: Message = {
           id: Date.now().toString(),
           role: "assistant",
-          content: `Got it — I have ${content.trim()}. Is that correct?`
+          content: `Got it — I have ${emailValue}. Is that correct? (Type "yes" or "no")`
         }
         setMessages(prev => [...prev, confirmMessage])
         return
       } else {
+        // Invalid email
         setIsTyping(true)
-        await new Promise(r => setTimeout(r, 800))
+        await new Promise(r => setTimeout(r, 400))
         setIsTyping(false)
         
         const retryMessage: Message = {
           id: Date.now().toString(),
           role: "assistant",
-          content: "That doesn't look quite right — I need a valid email to send you the goods!"
+          content: "Hmm, that doesn't look like a valid email. Try again?",
+          inputType: "email",
+          inputLabel: "Email address",
+          inputPlaceholder: "you@example.com"
         }
         setMessages(prev => [...prev, retryMessage])
         return
@@ -377,10 +397,18 @@ export default function GetStartedPage() {
         id: Date.now().toString(),
         role: "assistant",
         content: responseContent,
-        options: nextQuestion.options
+        options: nextQuestion.options,
+        inputType: nextQuestion.inputType as "email" | "text" | "name" | undefined,
+        inputLabel: nextQuestion.inputLabel,
+        inputPlaceholder: nextQuestion.inputPlaceholder
       }
       setMessages(prev => [...prev, assistantMessage])
       setStep(step + 1)
+      
+      // Set current input type if this question has a form input
+      if (nextQuestion.inputType) {
+        setCurrentInputType(nextQuestion.inputType as "email" | "text" | "name")
+      }
     }
   }
 
@@ -487,6 +515,42 @@ export default function GetStartedPage() {
                           <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                       )}
+                    </div>
+                  )}
+                  
+                  {/* Form Input Box */}
+                  {message.inputType && (
+                    <div className="mt-4 bg-secondary/50 rounded-2xl p-4 border border-border">
+                      <label className="block text-sm font-medium text-muted-foreground mb-2">
+                        {message.inputLabel}
+                      </label>
+                      <div className="flex gap-3">
+                        <input
+                          type={message.inputType === "email" ? "email" : "text"}
+                          value={formInputValue}
+                          onChange={(e) => setFormInputValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && formInputValue.trim()) {
+                              handleSendMessage(formInputValue)
+                            }
+                          }}
+                          placeholder={message.inputPlaceholder}
+                          className="flex-1 px-4 py-3 bg-background border border-border rounded-xl text-white placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary text-base"
+                          style={{ fontSize: "16px" }}
+                          autoFocus
+                        />
+                        <Button
+                          onClick={() => {
+                            if (formInputValue.trim()) {
+                              handleSendMessage(formInputValue)
+                            }
+                          }}
+                          disabled={!formInputValue.trim()}
+                          className="gradient-brand text-white cursor-pointer px-6"
+                        >
+                          <ArrowRight className="w-5 h-5" />
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -614,7 +678,8 @@ export default function GetStartedPage() {
       </main>
 
       {/* Fixed Input - hidden when showing lineup */}
-      {!showLineupOnly && (
+      {/* Bottom input bar - hidden when showing lineup or using form inputs */}
+      {!showLineupOnly && !currentInputType && (
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 pb-safe">
         <div className="max-w-4xl mx-auto px-4 md:px-8">
           <div className="flex gap-3 items-end">
@@ -624,7 +689,7 @@ export default function GetStartedPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={step === 5 ? "your@email.com" : awaitingEmailConfirm ? "Yes or No" : "Type or tap mic to talk..."}
+                placeholder={awaitingEmailConfirm ? "Type yes or no..." : "Type your answer..."}
                 disabled={showPayment}
                 rows={1}
                 className="w-full min-h-[52px] max-h-32 px-5 py-3.5 pr-14 bg-secondary border border-border rounded-2xl text-white placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none text-base"
