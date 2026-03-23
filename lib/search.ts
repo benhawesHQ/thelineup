@@ -97,10 +97,6 @@ export function getSearchQueries(user: ExtendedUser): string[] {
   const goalKeywords = extractKeywords(goals || "")
   const allKeywords = [...new Set([...topicKeywords, ...goalKeywords])]
   
-  console.log("[v0] Extracted keywords from topics:", topicKeywords)
-  console.log("[v0] Extracted keywords from goals:", goalKeywords)
-  console.log("[v0] Combined keywords:", allKeywords)
-  
   // Parse visibility types
   const visibilityTypes = (user.visibility || interests || "").toLowerCase()
   const wantsSpeaking = visibilityTypes.includes("speaking")
@@ -166,11 +162,7 @@ export function getSearchQueries(user: ExtendedUser): string[] {
   
   // Dedupe and limit
   const uniqueQueries = [...new Set(queries.filter(q => q.length > 10))]
-  const finalQueries = uniqueQueries.slice(0, 10)
-  
-  console.log("[v0] Generated search queries:", finalQueries)
-  
-  return finalQueries
+  return uniqueQueries.slice(0, 10)
 }
 
 // Single search query
