@@ -12,44 +12,81 @@ export function extractKeywords(text: string): string[] {
   const keywords: string[] = []
   const lower = text.toLowerCase()
   
-  // Business types - be specific
+  // Business types - be VERY specific, order matters (longer phrases first)
   const businessTypes = [
-    "photo booth", "photography", "videography", "event planning", "catering",
-    "real estate", "tech startup", "saas", "e-commerce", "consulting",
-    "coaching", "fitness", "wellness", "health", "beauty", "fashion",
-    "music", "podcast", "content creation", "marketing", "pr", "design",
-    "architecture", "law", "finance", "investing", "crypto", "ai", "machine learning",
-    "education", "nonprofit", "social impact", "sustainability", "climate"
+    // Events & Entertainment
+    "photo booth", "photobooth", "event planning", "event planner", "wedding planner",
+    "dj", "disc jockey", "catering", "florist", "videography", "videographer", 
+    "photography", "photographer", "event production", "party planning",
+    // Tech & Startups  
+    "tech startup", "saas", "software", "app developer", "web developer",
+    "e-commerce", "ecommerce", "ai", "artificial intelligence", "machine learning",
+    "blockchain", "crypto", "fintech", "edtech", "healthtech",
+    // Professional Services
+    "consulting", "consultant", "coaching", "coach", "trainer", "mentor",
+    "real estate", "realtor", "attorney", "lawyer", "accountant", "financial advisor",
+    // Creative & Media
+    "content creator", "content creation", "influencer", "youtuber", "podcaster",
+    "author", "writer", "journalist", "blogger", "graphic designer", "designer",
+    "artist", "musician", "singer", "actor", "comedian", "stand-up", "standup",
+    // Health & Wellness
+    "fitness", "personal trainer", "yoga", "nutritionist", "therapist", 
+    "wellness", "health coach", "life coach", "mental health",
+    // Other Industries
+    "fashion", "beauty", "makeup artist", "hair stylist", "chef", "restaurant",
+    "nonprofit", "non-profit", "social enterprise", "sustainability", "climate"
   ]
   
-  // Industry-specific terms
+  // Industry/topic keywords
   const industries = [
-    "entrepreneurship", "leadership", "innovation", "technology", "creative",
-    "entertainment", "media", "sports", "arts", "culture", "food", "travel",
-    "parenting", "relationships", "mental health", "personal development"
+    "entrepreneurship", "entrepreneur", "small business", "startup", "founder",
+    "leadership", "management", "innovation", "technology", "tech",
+    "creative", "creativity", "entertainment", "media", "marketing", "pr",
+    "public relations", "branding", "sales", "business development",
+    "sports", "athletics", "arts", "culture", "food", "culinary", "travel",
+    "parenting", "motherhood", "fatherhood", "relationships", "dating",
+    "personal development", "self help", "motivation", "inspiration",
+    "diversity", "dei", "inclusion", "women in business", "black entrepreneur"
   ]
   
-  // Specific goals
+  // Specific goals/targets
   const goalTerms = [
-    "tedx", "ted talk", "keynote", "book deal", "forbes", "entrepreneur magazine",
-    "inc magazine", "fast company", "new york times", "wall street journal",
-    "speaking circuit", "thought leader", "industry expert", "brand ambassador"
+    "tedx", "ted talk", "ted speaker", "keynote", "keynote speaker",
+    "book deal", "publish a book", "author", "forbes", "entrepreneur magazine",
+    "inc magazine", "inc 500", "fast company", "new york times", "wall street journal",
+    "speaking circuit", "paid speaker", "professional speaker", "thought leader",
+    "industry expert", "brand ambassador", "brand deal", "sponsorship"
   ]
   
-  // Check for matches
-  businessTypes.forEach(term => {
-    if (lower.includes(term)) keywords.push(term)
+  // Check for matches - longer phrases first to avoid partial matches
+  const allTerms = [...businessTypes, ...industries, ...goalTerms]
+    .sort((a, b) => b.length - a.length) // Sort by length descending
+  
+  allTerms.forEach(term => {
+    if (lower.includes(term) && !keywords.some(k => k.includes(term) || term.includes(k))) {
+      keywords.push(term)
+    }
   })
   
-  industries.forEach(term => {
-    if (lower.includes(term)) keywords.push(term)
-  })
+  // Also extract any quoted phrases they might use
+  const quotedPhrases = text.match(/"([^"]+)"/g)
+  if (quotedPhrases) {
+    quotedPhrases.forEach(phrase => {
+      keywords.push(phrase.replace(/"/g, '').toLowerCase())
+    })
+  }
   
-  goalTerms.forEach(term => {
-    if (lower.includes(term)) keywords.push(term)
-  })
+  // Extract capitalized multi-word phrases (likely business names or specific things)
+  const capitalizedPhrases = text.match(/[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+/g)
+  if (capitalizedPhrases) {
+    capitalizedPhrases.forEach(phrase => {
+      if (phrase.length > 5 && !['The', 'And', 'For'].includes(phrase)) {
+        keywords.push(phrase.toLowerCase())
+      }
+    })
+  }
   
-  return [...new Set(keywords)]
+  return [...new Set(keywords)].slice(0, 8) // Limit to top 8 keywords
 }
 
 export function getSearchQueries(user: ExtendedUser): string[] {
@@ -59,6 +96,10 @@ export function getSearchQueries(user: ExtendedUser): string[] {
   const topicKeywords = extractKeywords(user.topics || interests || "")
   const goalKeywords = extractKeywords(goals || "")
   const allKeywords = [...new Set([...topicKeywords, ...goalKeywords])]
+  
+  console.log("[v0] Extracted keywords from topics:", topicKeywords)
+  console.log("[v0] Extracted keywords from goals:", goalKeywords)
+  console.log("[v0] Combined keywords:", allKeywords)
   
   // Parse visibility types
   const visibilityTypes = (user.visibility || interests || "").toLowerCase()
@@ -125,7 +166,11 @@ export function getSearchQueries(user: ExtendedUser): string[] {
   
   // Dedupe and limit
   const uniqueQueries = [...new Set(queries.filter(q => q.length > 10))]
-  return uniqueQueries.slice(0, 10) // Use up to 10 queries for variety
+  const finalQueries = uniqueQueries.slice(0, 10)
+  
+  console.log("[v0] Generated search queries:", finalQueries)
+  
+  return finalQueries
 }
 
 // Single search query

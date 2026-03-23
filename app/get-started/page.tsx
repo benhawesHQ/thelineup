@@ -495,58 +495,63 @@ export default function GetStartedPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="rounded-2xl bg-[#FFFDF5] border-l-4 border-l-primary overflow-hidden"
+                    className="relative rounded-2xl bg-card border border-border overflow-hidden group hover:border-primary/50 transition-all"
                   >
+                    {/* Rainbow gradient top border */}
+                    <div className="absolute top-0 left-0 right-0 h-1 gradient-brand" />
+                    
                     <div className="p-5 md:p-6">
-                      {/* Header row */}
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs font-semibold tracking-widest text-muted-foreground">
-                          {String(idx + 1).padStart(2, '0')} — {opp.type?.toUpperCase() || 'OPPORTUNITY'}
+                      {/* Header with number badge and type */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center text-white font-bold text-sm shrink-0">
+                          {String(idx + 1).padStart(2, '0')}
+                        </div>
+                        <span className="text-xs font-semibold tracking-widest text-primary uppercase">
+                          {opp.type || 'Opportunity'}
                         </span>
                       </div>
                       
-                      {/* Category tag */}
-                      <div className="mb-3">
-                        <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-secondary text-foreground">
+                      {/* Category badge */}
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <span className="inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-full bg-primary/10 text-primary border border-primary/20">
                           {opp.category || 'GENERAL'}
                         </span>
+                        {opp.deadline && (
+                          <span className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full bg-accent/10 text-accent border border-accent/20">
+                            {opp.deadline}
+                          </span>
+                        )}
                       </div>
                       
                       {/* Title */}
-                      <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 leading-tight">
+                      <h3 className="text-lg md:text-xl font-bold text-white mb-3 leading-tight group-hover:text-primary transition-colors">
                         {opp.title}
                       </h3>
                       
                       {/* Description */}
-                      <p className="text-sm md:text-base text-muted-foreground mb-4 leading-relaxed">
+                      <p className="text-sm text-muted-foreground mb-5 leading-relaxed line-clamp-3">
                         {opp.description || opp.reason}
                       </p>
                       
-                      {/* Footer row */}
-                      <div className="flex items-center justify-between pt-3 border-t border-border/50">
-                        <div className="text-sm">
-                          {opp.deadline && (
-                            <span className="text-foreground">
-                              <span className="text-muted-foreground">Deadline:</span>{' '}
-                              <span className="font-semibold">{opp.deadline}</span>
-                            </span>
-                          )}
-                          {!opp.deadline && opp.date && (
-                            <span className="text-foreground font-semibold">{opp.date}</span>
-                          )}
-                          {!opp.deadline && !opp.date && (
-                            <span className="text-muted-foreground">Open</span>
-                          )}
+                      {/* Why it's a fit - if different from description */}
+                      {opp.description && opp.reason && opp.description !== opp.reason && (
+                        <div className="mb-5 p-3 rounded-xl bg-secondary/50 border border-border">
+                          <p className="text-sm text-muted-foreground italic">
+                            <span className="text-primary font-medium not-italic">Why this fits you:</span> {opp.reason}
+                          </p>
                         </div>
-                        <a
-                          href={opp.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-sm font-semibold text-foreground hover:text-primary transition-colors cursor-pointer"
-                        >
-                          {opp.action || 'View'} <span className="text-lg">→</span>
-                        </a>
-                      </div>
+                      )}
+                      
+                      {/* Action button */}
+                      <a
+                        href={opp.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl gradient-brand text-white font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer"
+                      >
+                        {opp.action || 'View Opportunity'}
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
                     </div>
                   </motion.div>
                 ))}
